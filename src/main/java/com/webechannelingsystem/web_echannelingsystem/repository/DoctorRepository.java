@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
+    // Get doctors by status
     List<Doctor> findByStatus(String status);
 
-    // Count by status
+    // Count doctors by status
     long countByStatus(String status);
 }
+
 
