@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - E-Channeling Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e6f2ff; /* light blue */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .login-card {
+            background-color: white;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1a73e8;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #155ab6;
+        }
+
+        .signup-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .signup-text a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Toggle between Login and Signup */
+        .hidden {
+            display: none;
+        }
+
+    </style>
+    <script>
+        function toggleForm() {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            loginForm.classList.toggle('hidden');
+            signupForm.classList.toggle('hidden');
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="login-card">
+        <!-- Login Form -->
+        <form id="login-form" th:action="@{/admin/login}" method="post">
+            <h2>Admin Login</h2>
+            <div class="form-group">
+                <label for="username-login">Username</label>
+                <input type="text" id="username-login" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password-login">Password</label>
+                <input type="password" id="password-login" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit">Login</button>
+            <p class="signup-text">Don't have an account? <a href="#" onclick="toggleForm()">Sign Up</a></p>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="signup-form" class="hidden" th:action="@{/admin/signup}" method="post">
+            <h2>Admin Sign Up</h2>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="fullName" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label for="email-signup">Email</label>
+                <input type="email" id="email-signup" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="number-signup">Phone Number</label>
+                <input type="tel" id="number-signup" name="number" placeholder="Enter your phone number" required>
+            </div>
+            <div class="form-group">
+                <label for="username-signup">Username</label>
+                <input type="text" id="username-signup" name="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label for="password-signup">Password</label>
+                <input type="password" id="password-signup" name="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit">Sign Up</button>
+            <p class="signup-text">Already have an account? <a href="#" onclick="toggleForm()">Login</a></p>
+        </form>
+    </div>
+</div>
+</body>
+</html>
