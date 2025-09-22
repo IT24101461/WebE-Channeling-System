@@ -15,9 +15,11 @@ public class PatientController {
     private PatientService patientService;
 
     @PostMapping("/register")
-    public ResponseEntity<Patient> registerPatient(@RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.registerPatient(patient));
+    public String registerPatient(@ModelAttribute Patient patient) {
+        patientService.registerPatient(patient);
+        return "redirect:/success"; // Or wherever you want to redirect after registration
     }
+
 
     @GetMapping("/{email}")
     public ResponseEntity<Patient> getPatient(@PathVariable String email) {
