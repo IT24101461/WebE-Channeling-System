@@ -15,5 +15,9 @@ public class PatientViewController {
     public String showRegistrationForm() {
         return "patient-register";
     }
-}
 
+    @GetMapping("/patients/login")
+    public String showLoginForm() {
+        return "patient-login";
+    }
+}
