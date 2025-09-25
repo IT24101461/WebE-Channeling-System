@@ -58,18 +58,131 @@
       text-align: center;
       margin-bottom: 50px;
     }
+
+    h2 {
+      color: #1a73e8;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .table-container {
+      margin-bottom: 40px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border: none;
+      text-align: center;
+    }
+
+    th {
+      background-color: #1a73e8;
+      color: white;
+      font-size: 16px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f6ff;
+    }
+
+    button {
+      padding: 6px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .cancel { background-color: #dc3545; color: white; }
+    .cancel:hover { opacity: 0.85; }
+
+    .reschedule { background-color: #007bff; color: white; }
+    .reschedule:hover { opacity: 0.85; }
+
+    .error {
+      color: #dc3545;
+      text-align: center;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
 <div class="sidebar">
   <h2>Patient Portal</h2>
-  <a th:href="@{/patients/dashboard}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a th:href="@{/patients/dashboard(email=${patient.email})}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
   <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
 </div>
 <div class="main">
-  <h1>Welcome to Your Dashboard</h1>
-  <p>This is your patient dashboard. You can view appointments, manage your profile, and more!</p>
-  <!-- Add more content as needed -->
+  <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>
+  <div th:if="${error}" class="error" th:text="${error}"></div>
+
+  <!-- Upcoming Appointments -->
+  <h2>Upcoming Appointments</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+      <tr>
+        <th>Doctor</th>
+        <th>Date & Time</th>
+        <th>Type</th>
+        <th>Payment Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="appt : ${upcomingAppointments}">
+        <td th:text="${appt.doctor.fullName}"></td>
+        <td th:text="${appt.appointmentTime}"></td>
+        <td th:text="${appt.type}"></td>
+        <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
+        <td>
+          <form th:action="@{/patients/appointments/cancel/{id}(id=${appt.id},email=${patient.email})}" method="post" style="display:inline;">
+            <button class="cancel">Cancel</button>
+          </form>
+          <form th:action="@{/patients/appointments/reschedule/{id}(id=${appt.id},email=${patient.email})}" method="post" style="display:inline;">
+            <input type="datetime-local" name="newTime" required/>
+            <button class="reschedule">Reschedule</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Past Appointments -->
+  <h2>Past Appointments</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+      <tr>
+        <th>Doctor</th>
+        <th>Date & Time</th>
+        <th>Type</th>
+        <th>Payment Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="appt : ${pastAppointments}">
+        <td th:text="${appt.doctor.fullName}"></td>
+        <td th:text="${appt.appointmentTime}"></td>
+        <td th:text="${appt.type}"></td>
+        <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 </body>
 </html>

@@ -24,5 +24,9 @@ public class PatientService {
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
-}
 
+    public boolean validatePatientCredentials(String email, String password) {
+        Optional<Patient> patient = getPatientByEmail(email);
+        return patient.isPresent() && patient.get().getPassword().equals(password);
+    }
+}
