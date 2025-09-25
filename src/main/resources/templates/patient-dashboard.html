@@ -111,6 +111,25 @@
     .reschedule { background-color: #007bff; color: white; }
     .reschedule:hover { opacity: 0.85; }
 
+    .book-appointment, .request-emergency {
+      background-color: #28a745;
+      color: white;
+      margin-right: 10px;
+    }
+
+    .book-appointment:hover, .request-emergency:hover {
+      opacity: 0.85;
+    }
+
+    .feedback {
+      background-color: #ffc107;
+      color: white;
+    }
+
+    .feedback:hover {
+      opacity: 0.85;
+    }
+
     .error {
       color: #dc3545;
       text-align: center;
@@ -127,6 +146,12 @@
 <div class="main">
   <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>
   <div th:if="${error}" class="error" th:text="${error}"></div>
+
+  <!-- New Appointment Buttons -->
+  <div style="text-align: center; margin-bottom: 40px;">
+    <button class="book-appointment">Book Appointment</button>
+    <button class="request-emergency">Request Emergency Appointment</button>
+  </div>
 
   <!-- Upcoming Appointments -->
   <h2>Upcoming Appointments</h2>
@@ -171,6 +196,7 @@
         <th>Date & Time</th>
         <th>Type</th>
         <th>Payment Status</th>
+        <th>Feedback</th>
       </tr>
       </thead>
       <tbody>
@@ -179,6 +205,9 @@
         <td th:text="${appt.appointmentTime}"></td>
         <td th:text="${appt.type}"></td>
         <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
+        <td>
+          <button class="feedback">Feedback</button>
+        </td>
       </tr>
       </tbody>
     </table>
