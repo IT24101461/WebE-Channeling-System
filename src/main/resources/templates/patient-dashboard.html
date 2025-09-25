@@ -141,7 +141,7 @@
 <div class="sidebar">
   <h2>Patient Portal</h2>
   <a th:href="@{/patients/dashboard(email=${patient.email})}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-  <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+  <a th:href="@{/patients/account/profile(email=${patient.email})}"><i class="bi bi-person"></i> Profile</a>
 </div>
 <div class="main">
   <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>

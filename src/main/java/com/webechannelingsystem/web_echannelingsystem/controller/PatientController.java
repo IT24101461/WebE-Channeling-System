@@ -91,4 +91,30 @@ public class PatientController {
     public List<Patient> getAllPatients() {
         return patientService.getAllPatients();
     }
+
+    @GetMapping("/account/profile")
+    public String showProfile(@RequestParam String email, Model model) {
+        Optional<Patient> patientOpt = patientService.getPatientByEmail(email);
+        if (patientOpt.isEmpty()) {
+            model.addAttribute("error", "Patient not found");
+            return "patient-dashboard";
+        }
+        model.addAttribute("patient", patientOpt.get());
+        return "patient-profile";
+    }
+
+    @PostMapping("/account/profile/edit")
+    public String editProfile(@ModelAttribute Patient patient, @RequestParam String email, Model model) {
+        Optional<Patient> existingPatientOpt = patientService.getPatientByEmail(email);
+        if (existingPatientOpt.isEmpty()) {
+            model.addAttribute("error", "Patient not found");
+            return "patient-profile";
+        }
+        Patient existingPatient = existingPatientOpt.get();
+        existingPatient.setFullName(patient.getFullName());
+        existingPatient.setContactNumber(patient.getContactNumber());
+        existingPatient.setPassword(patient.getPassword());
+        patientService.registerPatient(existingPatient); // Reuses save method
+        return "redirect:/patients/dashboard?email=" + email;
+    }
 }
