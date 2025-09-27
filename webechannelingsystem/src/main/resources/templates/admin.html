@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Pending Doctor Registrations</h1>
+<div id="doctor-list"></div>
+
+<script>
+    async function loadDoctors() {
+        let response = await fetch('/admin/pending-doctors');
+        let doctors = await response.json();
+        let container = document.getElementById('doctor-list');
+        container.innerHTML = '';
+
+        doctors.forEach(doc => {
+            let div = document.createElement('div');
+            div.innerHTML = `
+          <p>${doc.name} - ${doc.specialization}</p>
+          <button onclick="approve(${doc.id})">Approve</button>
+          <button onclick="reject(${doc.id})">Reject</button>
+        `;
+            container.appendChild(div);
+        });
+    }
+
+    async function approve(id) {
+        await fetch('/admin/approve/' + id, { method: 'POST' });
+        loadDoctors();
+    }
+
+    async function reject(id) {
+        await fetch('/admin/reject/' + id, { method: 'DELETE' });
+        loadDoctors();
+    }
+
+    loadDoctors();
+</script>
+</body>
+</html>

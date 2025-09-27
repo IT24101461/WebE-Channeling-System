@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - E-Channeling Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e6f2ff; /* light blue */
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .login-card {
+            background-color: white;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1a73e8;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #155ab6;
+        }
+        .hidden {
+            display: none;
+        }
+
+    </style>
+    <script>
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="login-card">
+        <!-- Login Form -->
+        <form id="login-form" th:action="@{/emergency/register}" method="post">
+            <h2>Emergency Register</h2>
+            <div class="form-group">
+                <label for="patient-name">Patient Name</label>
+                <input type="text" id="patient-name" name="patientName" placeholder="Enter Patient Name" required>
+            </div>
+            <div class="form-group">
+                <label for="patient-email">Patient Email</label>
+                <input type="text" id="patient-email" name="patientEmail" placeholder="Enter Patient Email" required>
+            </div>
+            <div class="form-group">
+                <label for="patient-contact-number">Patient Contact Number</label>
+                <input type="text" id="patient-contact-number" name="patientContactNumber" placeholder="Enter Patient Contact Number" required>
+            </div>
+            <div class="form-group">
+                <label for="patient-age">Patient Age</label>
+                <input type="text" id="patient-age" name="patientAge" placeholder="Enter Patient Age" required>
+            </div>
+            <div class="form-group">
+                <label for="patient-gender">Patient Gender</label>
+                <input type="text" id="patient-gender" name="patientGender" placeholder="Enter Patient Gender" required>
+            </div>
+            <div class="form-group">
+                <label for="patient-issues">Patient Issues</label>
+                <textarea id="patient-issues" name="patientIssues" rows="5" cols="40" placeholder="Enter Patient Issues" required></textarea>
+            </div>
+            <button type="submit">Register</button>
+
+        </form>
+    </div>
+</div>
+</body>
+</html>
