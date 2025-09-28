@@ -174,13 +174,13 @@
                 <td th:text="${doctor.email}"></td>
                 <td th:text="${doctor.username}"></td>
                 <td>
-                    <form th:action="@{/doctor/manage/approve/{id}(id=${doctor.id})}" method="post" style="display:inline;">
+                    <form th:action="@{/admin/manage/approve/{id}(id=${doctor.id})}" method="post" style="display:inline;">
                         <button class="approve">Approve</button>
                     </form>
-                    <form th:action="@{/doctor/manage/reject/{id}(id=${doctor.id})}" method="post" style="display:inline;">
+                    <form th:action="@{/admin/manage/reject/{id}(id=${doctor.id})}" method="post" style="display:inline;">
                         <button class="reject">Reject</button>
                     </form>
-                    <a th:href="@{/doctor/manage/profile/{id}(id=${doctor.id})}">
+                    <a th:href="@{/admin/manage/profile/{id}(id=${doctor.id})}">
                         <button class="profile">Profile</button>
                     </a>
                 </td>
@@ -204,7 +204,7 @@
                 <td th:text="${doctor.email}"></td>
                 <td th:text="${doctor.username}"></td>
                 <td>
-                    <a th:href="@{/doctor/manage/profile/{id}(id=${doctor.id})}">
+                    <a th:href="@{/admin/manage/profile/{id}(id=${doctor.id})}">
                         <button class="profile">Profile</button>
                     </a>
                 </td>
@@ -228,7 +228,7 @@
                 <td th:text="${doctor.email}"></td>
                 <td th:text="${doctor.username}"></td>
                 <td>
-                    <form th:action="@{/doctor/manage/delete/{id}(id=${doctor.id})}" method="post" style="display:inline;">
+                    <form th:action="@{/admin/manage/delete/{id}(id=${doctor.id})}" method="post" style="display:inline;">
                         <button class="delete">Delete</button>
                     </form>
                 </td>

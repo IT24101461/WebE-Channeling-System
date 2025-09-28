@@ -18,16 +18,22 @@ public class AdminService {
         return doctorRepository.findByStatus("PENDING");
     }
 
-    public Doctor approveDoctor(Long id) {
-        Doctor doctor = doctorRepository.findById(id).orElseThrow();
+    public Doctor approveDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findById(id.longValue()).orElseThrow();
         doctor.setStatus("APPROVED");
         return doctorRepository.save(doctor);
     }
 
-    public void rejectDoctor(Long id) {
-        Doctor doctor = doctorRepository.findById(id).orElseThrow();
+    public void rejectDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findById(id.longValue()).orElseThrow();
         doctor.setStatus("REJECTED");
         doctorRepository.save(doctor);
+    }
+
+    public void deleteDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findById(id.longValue())
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID " + id));
+        doctorRepository.delete(doctor);
     }
 }
 
