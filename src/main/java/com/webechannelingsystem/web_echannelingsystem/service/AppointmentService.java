@@ -45,4 +45,9 @@ public class AppointmentService {
         appointment.setAppointmentTime(newTime);
         return appointmentRepository.save(appointment);
     }
+
+    public Appointment saveAppointment(Appointment appointment) {
+        return appointmentRepository.save(appointment);
+    }
+
 }
