@@ -35,6 +35,12 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Doctor not found with ID " + id));
         doctorRepository.delete(doctor);
     }
+
+    public Doctor getDoctorById(Integer id) {
+        return doctorRepository.findById(id.longValue())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+    }
+
 }
 
 

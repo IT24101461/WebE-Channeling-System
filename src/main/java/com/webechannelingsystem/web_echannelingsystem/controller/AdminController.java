@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -44,6 +45,14 @@ public class AdminController {
         adminService.deleteDoctor(id);
         return "redirect:/admin/manage";
     }
+
+    @GetMapping("manage/profile/{id}")
+    public String viewDoctorProfile(@PathVariable Integer id, Model model) {
+        Doctor doctor = adminService.getDoctorById(id);
+        model.addAttribute("doctor", doctor);
+        return "doctor-profile"; // Thymeleaf HTML file
+    }
+
 }
 
 
