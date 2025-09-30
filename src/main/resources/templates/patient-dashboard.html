@@ -140,8 +140,9 @@
 <body>
 <div class="sidebar">
   <h2>Patient Portal</h2>
-  <a th:href="@{/patients/dashboard(email=${patient.email})}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-  <a th:href="@{/patients/account/profile(email=${patient.email})}"><i class="bi bi-person"></i> Profile</a>
+  <a th:href="@{/patients/dashboard}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a th:href="@{/patients/account/profile}"><i class="bi bi-person"></i> Profile</a>
+  <a th:href="@{/patients/logout}" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Log Out</a>
 </div>
 <div class="main">
   <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>
@@ -152,7 +153,7 @@
 
   <!-- New Appointment Buttons -->
   <div style="text-align: center; margin-bottom: 40px;">
-    <a th:href="@{/patients/book-appointment(email=${patient.email})}" class="btn book-appointment">
+    <a th:href="@{/patients/book-appointment}" class="btn book-appointment">
       Book Appointment
     </a>
     <button class="request-emergency">Request Emergency Appointment</button>
@@ -178,10 +179,10 @@
         <td th:text="${appt.type}"></td>
         <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
         <td>
-          <form th:action="@{/patients/appointments/cancel/{id}(id=${appt.id},email=${patient.email})}" method="post" style="display:inline;">
+          <form th:action="@{/patients/appointments/cancel/{id}(id=${appt.id})}" method="post" style="display:inline;">
             <button class="cancel">Cancel</button>
           </form>
-          <form th:action="@{/patients/appointments/reschedule/{id}(id=${appt.id},email=${patient.email})}" method="post" style="display:inline;">
+          <form th:action="@{/patients/appointments/reschedule/{id}(id=${appt.id})}" method="post" style="display:inline;">
             <input type="datetime-local" name="newTime" required/>
             <button class="reschedule">Reschedule</button>
           </form>
