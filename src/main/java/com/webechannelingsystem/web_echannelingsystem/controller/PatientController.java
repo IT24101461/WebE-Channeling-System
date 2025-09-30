@@ -1,9 +1,11 @@
 package com.webechannelingsystem.web_echannelingsystem.controller;
 
 import com.webechannelingsystem.web_echannelingsystem.model.Appointment;
+import com.webechannelingsystem.web_echannelingsystem.model.Doctor;
 import com.webechannelingsystem.web_echannelingsystem.model.Patient;
 import com.webechannelingsystem.web_echannelingsystem.service.AppointmentService;
 import com.webechannelingsystem.web_echannelingsystem.service.PatientService;
+import com.webechannelingsystem.web_echannelingsystem.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -87,6 +89,7 @@ public class PatientController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
     @GetMapping
     public List<Patient> getAllPatients() {
         return patientService.getAllPatients();
@@ -117,4 +120,75 @@ public class PatientController {
         patientService.registerPatient(existingPatient);
         return "redirect:/patients/dashboard?email=" + email;
     }
+
+    @GetMapping("/book-appointment")
+    public String showBookAppointmentForm(@RequestParam String email, Model model) {
+        // Get patient
+        Optional<Patient> patientOpt = patientService.getPatientByEmail(email);
+        if (patientOpt.isEmpty()) {
+            return "redirect:/patients/login";
+        }
+
+        // Get all specializations and doctors - USE INSTANCE METHODS, NOT STATIC
+        List<String> specializations = doctorService.getAllSpecializations(); // REMOVE 'DoctorService.' prefix
+        List<Doctor> doctors = doctorService.getApprovedDoctors(); // REMOVE 'DoctorService.' prefix
+
+        model.addAttribute("patient", patientOpt.get());
+        model.addAttribute("specializations", specializations);
+        model.addAttribute("doctors", doctors);
+        model.addAttribute("email", email);
+
+        return "book-appointment";
+    }
+
+    @Autowired
+    private DoctorService doctorService;
+
+
+    @PostMapping("/appointments/book")
+    public String bookAppointment(@RequestParam String patientEmail,
+                                  @RequestParam Long doctorId,
+                                  @RequestParam String appointmentTime,
+                                  @RequestParam String type,
+                                  Model model) {
+        try {
+            // Get patient
+            Optional<Patient> patientOpt = patientService.getPatientByEmail(patientEmail);
+            if (patientOpt.isEmpty()) {
+                model.addAttribute("error", "Patient not found");
+                return "redirect:/patients/login";
+            }
+
+            // Get doctor
+            Doctor doctor = doctorService.getDoctorById(doctorId);
+            if (doctor == null) {
+                model.addAttribute("error", "Doctor not found");
+                return "book-appointment";
+            }
+
+            // Create and save appointment
+            Appointment appointment = new Appointment();
+            appointment.setPatient(patientOpt.get());
+            appointment.setDoctor(doctor);
+            appointment.setAppointmentTime(LocalDateTime.parse(appointmentTime));
+            appointment.setType(type);
+            appointment.setStatus("SCHEDULED");
+            appointment.setPaymentStatus("PENDING");
+            appointment.setEmail(patientEmail);
+            appointment.setPaymentMethod("NOT_SELECTED"); // Default
+
+            appointmentService.saveAppointment(appointment);
+
+            return "redirect:/patients/dashboard?email=" + patientEmail + "&success=Appointment booked successfully!";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to book appointment: " + e.getMessage());
+            return "book-appointment";
+        }
+
+    }
+
+
+
 }
+

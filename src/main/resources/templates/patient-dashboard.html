@@ -145,11 +145,16 @@
 </div>
 <div class="main">
   <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>
+  <div th:if="${param.success}" class="alert alert-success text-center">
+    <span th:text="${param.success}"></span>
+  </div>
   <div th:if="${error}" class="error" th:text="${error}"></div>
 
   <!-- New Appointment Buttons -->
   <div style="text-align: center; margin-bottom: 40px;">
-    <button class="book-appointment">Book Appointment</button>
+    <a th:href="@{/patients/book-appointment(email=${patient.email})}" class="btn book-appointment">
+      Book Appointment
+    </a>
     <button class="request-emergency">Request Emergency Appointment</button>
   </div>
 
