@@ -114,7 +114,7 @@ public class PatientController {
         existingPatient.setFullName(patient.getFullName());
         existingPatient.setContactNumber(patient.getContactNumber());
         existingPatient.setPassword(patient.getPassword());
-        patientService.registerPatient(existingPatient); // Reuses save method
+        patientService.registerPatient(existingPatient);
         return "redirect:/patients/dashboard?email=" + email;
     }
 }
