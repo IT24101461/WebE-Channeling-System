@@ -2,6 +2,7 @@ package com.webechannelingsystem.web_echannelingsystem.controller;
 
 import com.webechannelingsystem.web_echannelingsystem.model.Admin;
 import com.webechannelingsystem.web_echannelingsystem.repository.AdminRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +30,15 @@ public class AdminAuthController {
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        Model model) {
+                        Model model,
+                        HttpSession session) {
 
         Admin admin = adminRepository.findByUsername(username).orElse(null);
 
         if (admin != null && admin.getPassword().equals(password)) {
             // Login successful, redirect to admin dashboard (pending doctors page)
+            session.setAttribute("loggedInAdmin", admin);
+
             return "redirect:/admin/dashboard";
         } else {
             // Login failed
@@ -70,5 +74,12 @@ public class AdminAuthController {
         model.addAttribute("message", "Signup successful! You can now login.");
         return "login"; // redirect to login form
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // clear session
+        return "redirect:/admin/login?logout"; // back to login page
+    }
+
 }
 
