@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmergencyRegisterService {
@@ -21,6 +22,21 @@ public class EmergencyRegisterService {
 
     public Emergency save(Emergency emergency){
         return emergencyRegisterRepository.save(emergency);
+    }
+
+    public List<Emergency> getAllCases() {
+        return emergencyRegisterRepository.findAll();
+    }
+
+    public void deleteCase(Long id) {
+        emergencyRegisterRepository.deleteById(id);
+    }
+
+    public void confirmCase(Long id) {
+        Optional<Emergency> emergencyOptional = emergencyRegisterRepository.findById(id);
+        Emergency emergency = emergencyOptional.get();
+        emergency.setStatus("CONFIRMED");
+        emergencyRegisterRepository.save(emergency);
     }
 }
 

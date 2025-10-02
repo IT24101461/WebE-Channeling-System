@@ -111,8 +111,12 @@
                 <textarea id="patient-issues" name="patientIssues" rows="5" cols="40" placeholder="Enter Patient Issues" required></textarea>
             </div>
             <button type="submit">Register</button>
+        </form> <br></br>
 
+        <form th:action="@{/emergency/emergency-cases}" method="get">
+            <button type="submit">Load All Emergencies</button>
         </form>
+
     </div>
 </div>
 </body>

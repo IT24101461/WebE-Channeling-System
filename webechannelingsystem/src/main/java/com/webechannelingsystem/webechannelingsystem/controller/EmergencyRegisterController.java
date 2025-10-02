@@ -9,10 +9,7 @@ import com.webechannelingsystem.webechannelingsystem.service.EmergencyRegisterSe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,6 +30,24 @@ public class EmergencyRegisterController {
 //    public AdminAuthController(AdminRepository adminRepository) {
 //        this.adminRepository = adminRepository;
 //    }
+
+    @GetMapping("/emergency-cases")
+    public String listCases(Model model) {
+        model.addAttribute("cases", emergencyRegisterService.getAllCases());
+        return "EmergencyCases"; // Thymeleaf page
+    }
+
+    @PostMapping("/emergency-cases/delete/{id}")
+    public String deleteCase(@PathVariable Long id) {
+        emergencyRegisterService.deleteCase(id);
+        return "redirect:/emergency/emergency-cases"; // refresh table after delete
+    }
+
+    @PostMapping("/emergency-cases/confirm/{id}")
+    public String confirmCase(@PathVariable Long id) {
+        emergencyRegisterService.confirmCase(id);
+        return "redirect:/emergency/emergency-cases"; // refresh table after delete
+    }
 
     // Show login/signup page
     @GetMapping("/register")
