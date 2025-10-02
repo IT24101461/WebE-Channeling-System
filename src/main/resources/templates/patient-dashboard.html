@@ -182,8 +182,7 @@
           <form th:action="@{/patients/appointments/cancel/{id}(id=${appt.id})}" method="post" style="display:inline;">
             <button class="cancel">Cancel</button>
           </form>
-          <form th:action="@{/patients/appointments/reschedule/{id}(id=${appt.id})}" method="post" style="display:inline;">
-            <input type="datetime-local" name="newTime" required/>
+          <form th:action="@{/patients/reschedule-appointment/{id}(id=${appt.id})}" method="get" style="display:inline;">
             <button class="reschedule">Reschedule</button>
           </form>
         </td>

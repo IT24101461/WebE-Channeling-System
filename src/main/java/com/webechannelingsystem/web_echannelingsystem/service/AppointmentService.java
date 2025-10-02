@@ -5,7 +5,9 @@ import com.webechannelingsystem.web_echannelingsystem.repository.AppointmentRepo
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -17,13 +19,17 @@ public class AppointmentService {
     }
 
     public List<Appointment> getUpcomingAppointments(Long patientId) {
-        return appointmentRepository.findByPatientIdAndAppointmentTimeAfterAndStatus(
+        List<Appointment> appointments = appointmentRepository.findByPatientIdAndAppointmentTimeAfterAndStatus(
                 patientId, LocalDateTime.now(), "SCHEDULED");
+        appointments.sort(Comparator.comparing(Appointment::getAppointmentTime));
+        return appointments;
     }
 
     public List<Appointment> getPastAppointments(Long patientId) {
-        return appointmentRepository.findByPatientIdAndAppointmentTimeBeforeOrStatus(
+        List<Appointment> appointments = appointmentRepository.findByPatientIdAndAppointmentTimeBeforeOrStatus(
                 patientId, LocalDateTime.now(), "COMPLETED");
+        appointments.sort(Comparator.comparing(Appointment::getAppointmentTime).reversed());
+        return appointments;
     }
 
     public Appointment cancelAppointment(Long appointmentId) {
@@ -50,4 +56,7 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
+    public Optional<Appointment> getAppointmentById(Long id) {
+        return appointmentRepository.findById(id);
+    }
 }

@@ -84,6 +84,21 @@ public class PatientController {
         }
     }
 
+    @GetMapping("/reschedule-appointment/{id}")
+    public String showReschedulePage(@PathVariable Long id, Model model, HttpSession session) {
+        String email = (String) session.getAttribute("loggedInPatientEmail");
+        if (email == null) {
+            return "redirect:/patients/login";
+        }
+        Optional<Appointment> appointmentOpt = appointmentService.getAppointmentById(id);
+        if (appointmentOpt.isEmpty()) {
+            model.addAttribute("error", "Appointment not found");
+            return "redirect:/patients/dashboard";
+        }
+        model.addAttribute("appointment", appointmentOpt.get());
+        return "reschedule-appointment";
+    }
+
     @PostMapping("/appointments/reschedule/{id}")
     public String rescheduleAppointment(@PathVariable Long id, @RequestParam String newTime, HttpSession session, Model model) {
         String email = (String) session.getAttribute("loggedInPatientEmail");
@@ -93,10 +108,10 @@ public class PatientController {
         try {
             LocalDateTime newDateTime = LocalDateTime.parse(newTime);
             appointmentService.rescheduleAppointment(id, newDateTime);
-            return "redirect:/patients/dashboard";
+            return "redirect:/patients/dashboard?success=Appointment rescheduled successfully!";
         } catch (IllegalArgumentException | IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
-            return patientDashboard(model, session);
+            return "reschedule-appointment";
         }
     }
 
