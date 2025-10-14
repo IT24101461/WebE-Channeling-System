@@ -232,4 +232,21 @@ public class PatientController {
         session.invalidate(); // Invalidate the session
         return "redirect:/patients/login"; // Redirect to login page
     }
+
+    @PostMapping("/account/delete")
+    public String deleteAccount(HttpSession session, Model model) {
+        String email = (String) session.getAttribute("loggedInPatientEmail");
+        if (email == null) {
+            return "redirect:/patients/login";
+        }
+        try {
+            patientService.deletePatient(email);
+            session.invalidate();
+            model.addAttribute("message", "Account deleted successfully. Goodbye!");
+            return "patient-login";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "patient-profile";
+        }
+    }
 }
