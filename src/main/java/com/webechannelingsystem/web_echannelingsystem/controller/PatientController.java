@@ -41,6 +41,12 @@ public class PatientController {
         }
     }
 
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("patient", new Patient());
+        return "patient-register"; // Assumes a patient-register.html template exists
+    }
+
     @PostMapping("/register")
     public String registerPatient(@ModelAttribute Patient patient, Model model) {
         patientService.registerPatient(patient);
@@ -76,9 +82,9 @@ public class PatientController {
             return "redirect:/patients/login";
         }
         try {
-            appointmentService.cancelAppointment(id);
-            return "redirect:/patients/dashboard";
-        } catch (IllegalArgumentException | IllegalStateException e) {
+            appointmentService.deleteAppointment(id);
+            return "redirect:/patients/dashboard?success=Appointment cancelled successfully!";
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return patientDashboard(model, session);
         }

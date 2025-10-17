@@ -2,7 +2,9 @@ package com.webechannelingsystem.web_echannelingsystem.service;
 
 import com.webechannelingsystem.web_echannelingsystem.model.Appointment;
 import com.webechannelingsystem.web_echannelingsystem.repository.AppointmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -12,11 +14,8 @@ import java.util.Optional;
 @Service
 public class AppointmentService {
 
-    private final AppointmentRepository appointmentRepository;
-
-    public AppointmentService(AppointmentRepository appointmentRepository) {
-        this.appointmentRepository = appointmentRepository;
-    }
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     public List<Appointment> getUpcomingAppointments(Long patientId) {
         List<Appointment> appointments = appointmentRepository.findByPatientIdAndAppointmentTimeAfterAndStatus(
@@ -32,6 +31,16 @@ public class AppointmentService {
         return appointments;
     }
 
+    @Transactional
+    public void deleteAppointment(Long appointmentId) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        if (appointmentOpt.isEmpty()) {
+            throw new IllegalArgumentException("Appointment not found");
+        }
+        appointmentRepository.deleteById(appointmentId);
+    }
+
+    @Transactional
     public Appointment cancelAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
@@ -42,6 +51,7 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
+    @Transactional
     public Appointment rescheduleAppointment(Long appointmentId, LocalDateTime newTime) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
