@@ -20,7 +20,7 @@ public class Admin {
     @Column(name = "Number")
     private String number;
 
-    @Column(name = "Username")
+    @Column(name = "Username", length = 50)
     private String username;
 
     @Column(name = "Password")
