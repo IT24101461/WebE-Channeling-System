@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Additional rules from main branch
+/mvnw text eol=lf
+*.cmd text eol=crlf
