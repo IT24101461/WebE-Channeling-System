@@ -62,6 +62,8 @@ public class AdminAuthController {
             return "login";
         }
 
+
+
         Admin admin = new Admin();
         admin.setFullName(fullName);
         admin.setEmail(email);
@@ -69,6 +71,7 @@ public class AdminAuthController {
         admin.setUsername(username);
         admin.setPassword(password);
 
+        System.out.println("🚀 Signup request received for: ");
         adminRepository.save(admin);
 
         model.addAttribute("message", "Signup successful! You can now login.");
