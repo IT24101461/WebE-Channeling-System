@@ -6,62 +6,134 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary-color: #64748b;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --error-color: #ef4444;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border-color: #e2e8f0;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+      --gradient-start: #ffffff;
+      --gradient-end: #e5e7eb;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #e6f2ff;
       margin: 0;
       padding: 0;
-      display: flex;
-    }
-
-    .sidebar {
-      width: 240px;
-      background-color: #1a73e8;
-      color: white;
       height: 100vh;
-      position: fixed;
-      padding: 20px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .sidebar h2 {
-      font-size: 22px;
-      margin-bottom: 50px;
-      text-align: center;
-    }
-
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 20px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      text-decoration: none;
-      color: white;
-      font-weight: 500;
-    }
-
-    .sidebar a:hover, .sidebar a.active {
-      background-color: #155bb5;
+      background: linear-gradient(to right, rgb(173, 147, 255), rgb(94, 164, 174));
+      overflow: hidden;
     }
 
     .main {
-      margin-left: 240px;
-      flex: 1;
-      padding: 40px 50px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .content-box {
+      width: 1200px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .top-bar {
+      background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+      padding: 15px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      height: 60px;
+    }
+
+    .top-bar .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-bar .brand i {
+      font-size: 28px;
+      color: var(--primary-color);
+    }
+
+    .top-bar .actions {
+      display: flex;
+      gap: 20px;
+      white-space: nowrap;
+    }
+
+    .top-bar .actions a {
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      transition: color 0.3s ease;
+    }
+
+    .top-bar .actions a:hover {
+      color: var(--primary-color);
+    }
+
+    .scrollable-content {
+      height: calc(100% - 60px);
+      overflow-y: auto;
+      margin-top: 60px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-section {
+      background: linear-gradient(135deg, rgb(109, 77, 255) 0%, rgb(108, 94, 207) 100%);
+      flex: 0 0 auto;
+      position: relative;
+      padding: 20px 50px 0;
+      box-sizing: border-box;
+    }
+
+    .bottom-section {
+      background-color: #ffffff;
+      flex: 1 1 auto;
+      position: relative;
+      padding: 20px 50px;
+      box-sizing: border-box;
+      overflow-y: auto;
     }
 
     h1 {
-      color: #1a73e8;
+      color: white;
       font-size: 36px;
       text-align: center;
-      margin-bottom: 50px;
+      margin-bottom: 30px;
     }
 
     h2 {
-      color: #1a73e8;
-      margin-top: 40px;
+      color: var(--text-primary);
+      margin-top: 20px;
       margin-bottom: 20px;
       font-size: 24px;
     }
@@ -73,149 +145,221 @@
 
     table {
       width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      border-radius: 10px;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      box-shadow: var(--shadow-lg);
+      border-radius: 12px;
       overflow: hidden;
     }
 
-    th, td {
-      padding: 12px 15px;
-      border: none;
+    th {
+      background: linear-gradient(90deg, #ffffff, #e5e7eb);
+      color: var(--text-primary);
+      font-size: 16px;
+      padding: 15px;
       text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.1);
     }
 
-    th {
-      background-color: #1a73e8;
-      color: white;
-      font-size: 16px;
+    td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.3s ease;
     }
 
     tr:nth-child(even) {
-      background-color: #f2f6ff;
+      background-color: rgba(248, 250, 252, 0.9);
+    }
+
+    tr:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
     }
 
     button {
-      padding: 6px 14px;
+      padding: 6px 12px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s ease;
       font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .cancel { background-color: #dc3545; color: white; }
-    .cancel:hover { opacity: 0.85; }
-
-    .reschedule { background-color: #007bff; color: white; }
-    .reschedule:hover { opacity: 0.85; }
-
-    .book-appointment, .request-emergency {
-      background-color: #28a745;
-      color: white;
-      margin-right: 10px;
-    }
-
-    .book-appointment:hover, .request-emergency:hover {
-      opacity: 0.85;
-    }
-
-    .feedback {
-      background-color: #ffc107;
+    .cancel {
+      background: linear-gradient(90deg, #ff3333, #cc0000);
       color: white;
     }
+    .cancel:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(255, 51, 51, 0.3);
+    }
 
-    .feedback:hover {
-      opacity: 0.85;
+    .reschedule {
+      background: linear-gradient(90deg, #3399ff, #0066cc);
+      color: white;
+      margin-left: 8px;
+    }
+    .reschedule:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(51, 153, 255, 0.3);
     }
 
     .error {
-      color: #dc3545;
+      color: var(--error-color);
       text-align: center;
       margin-bottom: 15px;
     }
+
+    .alert {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .alert-success {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.table-container').forEach((container, index) => {
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(20px)';
+        container.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+        observer.observe(container);
+      });
+
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        button.addEventListener('focus', () => {
+          button.style.transform = 'translateY(-1px)';
+        });
+        button.addEventListener('blur', () => {
+          button.style.transform = 'translateY(0)';
+        });
+      });
+    });
+  </script>
 </head>
 <body>
-<div class="sidebar">
-  <h2>Patient Portal</h2>
-  <a th:href="@{/patients/dashboard}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-  <a th:href="@{/patients/account/profile}"><i class="bi bi-person"></i> Profile</a>
-  <a th:href="@{/patients/logout}" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Log Out</a>
-</div>
 <div class="main">
-  <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>
-  <div th:if="${param.success}" class="alert alert-success text-center">
-    <span th:text="${param.success}"></span>
-  </div>
-  <div th:if="${error}" class="error" th:text="${error}"></div>
+  <div class="content-box">
+    <div class="top-bar">
+      <div class="brand">
+        <i class="bi bi-hospital"></i>
+        E-Channeling Portal
+      </div>
+      <div class="actions">
+        <a th:href="@{/patients/book-appointment}">
+          <i class="bi bi-calendar-plus"></i> Book Appointment
+        </a>
+        <a th:href="@{/patients/emergency-appointment}">
+          <i class="bi bi-exclamation-circle"></i> Request Emergency Appointment
+        </a>
+        <a th:href="@{/patients/account/profile}">
+          <i class="bi bi-person"></i> Profile
+        </a>
+        <a th:href="@{/patients/logout}">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+        <a th:href="@{/patients/feedback}">
+          <i class="bi bi-chat-square-text"></i> Provide Feedback
+        </a>
+      </div>
+    </div>
+    <div class="scrollable-content">
+      <div class="top-section">
+        <h1>Dashboard</h1>
+        <div th:if="${param.success}" class="alert alert-success text-center">
+          <span th:text="${param.success}"></span>
+        </div>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+      </div>
+      <div class="bottom-section">
+        <!-- Upcoming Appointments -->
+        <h2>Upcoming Appointments</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>Doctor</th>
+              <th>Date & Time</th>
+              <th>Type</th>
+              <th>Payment Status</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="appt : ${upcomingAppointments}">
+              <td th:text="${appt.doctor.fullName}"></td>
+              <td th:text="${appt.appointmentTime}"></td>
+              <td th:text="${appt.type}"></td>
+              <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
+              <td style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                <form th:action="@{/patients/appointments/cancel/{id}(id=${appt.id})}" method="post" style="margin: 0;">
+                  <button class="cancel">Cancel</button>
+                </form>
+                <form th:action="@{/patients/reschedule-appointment/{id}(id=${appt.id})}" method="get" style="margin: 0;">
+                  <button class="reschedule">Reschedule</button>
+                </form>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
 
-  <!-- New Appointment Buttons -->
-  <div style="text-align: center; margin-bottom: 40px;">
-    <a th:href="@{/patients/book-appointment}" class="btn book-appointment">
-      Book Appointment
-    </a>
-    <button class="request-emergency">Request Emergency Appointment</button>
-  </div>
-
-  <!-- Upcoming Appointments -->
-  <h2>Upcoming Appointments</h2>
-  <div class="table-container">
-    <table>
-      <thead>
-      <tr>
-        <th>Doctor</th>
-        <th>Date & Time</th>
-        <th>Type</th>
-        <th>Payment Status</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="appt : ${upcomingAppointments}">
-        <td th:text="${appt.doctor.fullName}"></td>
-        <td th:text="${appt.appointmentTime}"></td>
-        <td th:text="${appt.type}"></td>
-        <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
-        <td>
-          <form th:action="@{/patients/appointments/cancel/{id}(id=${appt.id})}" method="post" style="display:inline;">
-            <button class="cancel">Cancel</button>
-          </form>
-          <form th:action="@{/patients/reschedule-appointment/{id}(id=${appt.id})}" method="get" style="display:inline;">
-            <button class="reschedule">Reschedule</button>
-          </form>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Past Appointments -->
-  <h2>Past Appointments</h2>
-  <div class="table-container">
-    <table>
-      <thead>
-      <tr>
-        <th>Doctor</th>
-        <th>Date & Time</th>
-        <th>Type</th>
-        <th>Payment Status</th>
-        <th>Feedback</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="appt : ${pastAppointments}">
-        <td th:text="${appt.doctor.fullName}"></td>
-        <td th:text="${appt.appointmentTime}"></td>
-        <td th:text="${appt.type}"></td>
-        <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
-        <td>
-          <button class="feedback">Feedback</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+        <!-- Past Appointments -->
+        <h2>Past Appointments</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>Doctor</th>
+              <th>Date & Time</th>
+              <th>Type</th>
+              <th>Payment Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="appt : ${pastAppointments}">
+              <td th:text="${appt.doctor.fullName}"></td>
+              <td th:text="${appt.appointmentTime}"></td>
+              <td th:text="${appt.type}"></td>
+              <td th:text="${appt.paymentStatus} ?: 'N/A'"></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 </body>

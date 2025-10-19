@@ -44,9 +44,7 @@ public class PatientService {
             throw new IllegalArgumentException("Patient not found");
         }
         Patient patient = patientOpt.get();
-        // Delete all associated appointments
         appointmentRepository.deleteByPatientId(patient.getId());
-        // Delete the patient
         patientRepository.delete(patient);
     }
 }

@@ -41,17 +41,17 @@ public class PatientController {
         }
     }
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("patient", new Patient());
-        return "patient-register"; // Assumes a patient-register.html template exists
-    }
-
     @PostMapping("/register")
     public String registerPatient(@ModelAttribute Patient patient, Model model) {
         patientService.registerPatient(patient);
         model.addAttribute("message", "Registration successful! Please log in.");
         return "patient-login";
+    }
+
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("patient", new Patient());
+        return "patient-register"; // Assumes a patient-register.html template exists
     }
 
     @GetMapping("/dashboard")
