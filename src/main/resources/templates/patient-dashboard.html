@@ -107,13 +107,7 @@
       flex-direction: column;
     }
 
-    .top-section {
-      background: linear-gradient(135deg, rgb(109, 77, 255) 0%, rgb(108, 94, 207) 100%);
-      flex: 0 0 auto;
-      position: relative;
-      padding: 20px 50px 0;
-      box-sizing: border-box;
-    }
+
 
     .bottom-section {
       background-color: #ffffff;
@@ -296,13 +290,11 @@
       </div>
     </div>
     <div class="scrollable-content">
-      <div class="top-section">
-        <h1>Dashboard</h1>
-        <div th:if="${param.success}" class="alert alert-success text-center">
-          <span th:text="${param.success}"></span>
-        </div>
-        <div th:if="${error}" class="error" th:text="${error}"></div>
+      <!-- Alert / Error messages -->
+      <div th:if="${param.success}" class="alert alert-success text-center">
+        <span th:text="${param.success}"></span>
       </div>
+      <div th:if="${error}" class="error" th:text="${error}"></div>
       <div class="bottom-section">
         <!-- Upcoming Appointments -->
         <h2>Upcoming Appointments</h2>
