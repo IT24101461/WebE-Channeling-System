@@ -53,12 +53,13 @@
         }
         .error { color: #dc3545; }
         .message { color: #28a745; }
+        .error-field { color: #dc3545; font-size: 0.9rem; margin-top: 5px; }
     </style>
 </head>
 <body>
 <div class="profile-container">
     <h2>Profile</h2>
-    <!-- Success Message -->
+
     <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
         <span th:text="${param.success}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -67,7 +68,7 @@
     <div th:if="${error}" class="error" th:text="${error}"></div>
     <div th:if="${message}" class="message" th:text="${message}"></div>
 
-    <form th:action="@{/patients/account/profile/edit}" method="post" th:object="${patient}">
+    <form th:action="@{/patients/account/profile/edit}" method="post" th:object="${patient}" id="profileForm">
         <div class="form-group">
             <label for="fullName">Full Name</label>
             <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required />
@@ -76,11 +77,13 @@
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" th:field="*{email}" required />
+            <div id="emailError" class="error-field"></div>
         </div>
 
         <div class="form-group">
             <label for="contactNumber">Contact Number</label>
             <input type="text" class="form-control" id="contactNumber" th:field="*{contactNumber}" required />
+            <div id="contactError" class="error-field"></div>
         </div>
 
         <div class="form-group">
@@ -89,6 +92,12 @@
                    placeholder="Enter new password" />
         </div>
 
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                   placeholder="Confirm new password" />
+            <div id="passwordError" class="error-field"></div>
+        </div>
 
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </form>
@@ -102,7 +111,54 @@
 
     <p class="text-center mt-3"><a th:href="@{/patients/dashboard}">Back to Dashboard</a></p>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const profileForm = document.getElementById('profileForm');
+    const passwordInput = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+
+    profileForm.addEventListener('submit', function(e) {
+        let hasError = false;
+
+        document.getElementById('passwordError').textContent = '';
+        document.getElementById('contactError').textContent = '';
+        document.getElementById('emailError').textContent = '';
+
+        // Password match
+        if (passwordInput.value && passwordInput.value !== confirmPassword.value) {
+            e.preventDefault();
+            document.getElementById('passwordError').textContent = "Passwords do not match!";
+            hasError = true;
+        }
+
+        // Password requirements (if changed)
+        if (passwordInput.value) {
+            const passPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+            if (!passPattern.test(passwordInput.value)) {
+                e.preventDefault();
+                document.getElementById('passwordError').textContent = "Password must be at least 8 characters and contain letters and numbers.";
+                hasError = true;
+            }
+        }
+
+        // Contact number validation
+        const contactVal = document.getElementById('contactNumber').value;
+        if (!/^07\d{8}$/.test(contactVal)) {
+            e.preventDefault();
+            document.getElementById('contactError').textContent = "Contact number must be 10 digits starting with '07'.";
+            hasError = true;
+        }
+
+        // Email validation
+        const emailVal = document.getElementById('email').value;
+        const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+        if (!emailPattern.test(emailVal)) {
+            e.preventDefault();
+            document.getElementById('emailError').textContent = "Enter a valid email address.";
+            hasError = true;
+        }
+    });
+</script>
 </body>
 </html>
