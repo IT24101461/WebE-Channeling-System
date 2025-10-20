@@ -43,7 +43,37 @@
             text-align: center;
             margin-bottom: 15px;
         }
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .detail-value {
+            margin: 0 0 10px;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const newTimeInput = document.getElementById('newTime');
+            const now = new Date();
+            // Set minimum date to today, adjusting to local time
+            const minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString().slice(0, 16);
+            newTimeInput.min = minDate;
+
+            // Prevent submission if date is in the past
+            const form = document.querySelector('form');
+            form.addEventListener('submit', (event) => {
+                const selectedDate = new Date(newTimeInput.value);
+                if (selectedDate < now) {
+                    event.preventDefault();
+                    alert('Please select a future date and time.');
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="reschedule-container">
@@ -51,8 +81,10 @@
     <div th:if="${error}" class="error" th:text="${error}"></div>
     <form th:action="@{'/patients/appointments/reschedule/' + ${appointment.id}}" method="post">
         <div class="form-group">
-            <label>Appointment Details</label>
-            <p th:text="${'' + appointment.doctor.fullName + ' - ' + #temporals.format(appointment.appointmentTime, 'yyyy-MM-dd HH:mm')}"></p>
+            <div class="detail-label">Doctor</div>
+            <div class="detail-value" th:text="${appointment.doctor.fullName}"></div>
+            <div class="detail-label">Current Date & Time</div>
+            <div class="detail-value" th:text="${#temporals.format(appointment.appointmentTime, 'yyyy-MM-dd HH:mm')}"></div>
         </div>
         <div class="form-group">
             <label for="newTime">New Date & Time</label>

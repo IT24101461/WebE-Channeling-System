@@ -42,11 +42,21 @@ public class PatientController {
     }
 
     @PostMapping("/register")
-    public String registerPatient(@ModelAttribute Patient patient, Model model) {
+    public String registerPatient(@ModelAttribute Patient patient, Model model,
+                                  @RequestParam("confirmPassword") String confirmPassword) {
+        // 1️⃣ Check passwords match
+        if (!patient.getPassword().equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match!");
+            model.addAttribute("patient", patient);
+            return "patient-register";
+        }
+
+        // 2️⃣ Continue normal registration
         patientService.registerPatient(patient);
         model.addAttribute("message", "Registration successful! Please log in.");
         return "patient-login";
     }
+
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -154,18 +164,38 @@ public class PatientController {
         if (email == null) {
             return "redirect:/patients/login";
         }
+
         Optional<Patient> existingPatientOpt = patientService.getPatientByEmail(email);
         if (existingPatientOpt.isEmpty()) {
             model.addAttribute("error", "Patient not found");
             return "patient-profile";
         }
+
         Patient existingPatient = existingPatientOpt.get();
+
+        // ✅ Update fields
         existingPatient.setFullName(patient.getFullName());
         existingPatient.setContactNumber(patient.getContactNumber());
-        existingPatient.setPassword(patient.getPassword());
+        existingPatient.setEmail(patient.getEmail());
+
+        // ✅ Only update password if provided
+        if (patient.getPassword() != null && !patient.getPassword().isEmpty()) {
+            existingPatient.setPassword(patient.getPassword());
+        }
+
+        // ✅ Save changes
         patientService.registerPatient(existingPatient);
-        return "redirect:/patients/dashboard";
+
+        // ✅ Update session if email was changed
+        session.setAttribute("loggedInPatientEmail", existingPatient.getEmail());
+
+        // ✅ Add success message for confirmation
+        model.addAttribute("success", "Profile updated successfully!");
+
+        return "redirect:/patients/account/profile?success=Profile updated successfully!";
     }
+
+
 
     @GetMapping("/book-appointment")
     public String showBookAppointmentForm(HttpSession session, Model model) {

@@ -20,8 +20,6 @@
             --border-color: #e2e8f0;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-            --gradient-start: #ffffff;
-            --gradient-end: #e5e7eb;
         }
 
         body {
@@ -64,7 +62,7 @@
             height: 60px;
         }
 
-        .top-bar .brand {
+        .brand {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -73,18 +71,18 @@
             color: var(--text-primary);
         }
 
-        .top-bar .brand i {
+        .brand i {
             font-size: 28px;
             color: var(--primary-color);
         }
 
-        .top-bar .actions {
+        .actions {
             display: flex;
             gap: 20px;
             white-space: nowrap;
         }
 
-        .top-bar .actions a {
+        .actions a {
             text-decoration: none;
             color: var(--text-primary);
             font-weight: 500;
@@ -95,7 +93,7 @@
             transition: color 0.3s ease;
         }
 
-        .top-bar .actions a:hover {
+        .actions a:hover {
             color: var(--primary-color);
         }
 
@@ -109,18 +107,13 @@
 
         .top-section {
             background: linear-gradient(135deg, rgb(109, 77, 255) 0%, rgb(108, 94, 207) 100%);
-            flex: 0 0 auto;
-            position: relative;
             padding: 20px 50px 0;
-            box-sizing: border-box;
         }
 
         .bottom-section {
             background-color: #ffffff;
             flex: 1 1 auto;
-            position: relative;
             padding: 20px 50px;
-            box-sizing: border-box;
             overflow-y: auto;
         }
 
@@ -166,7 +159,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             background: linear-gradient(90deg, #3399ff, #0066cc);
             color: white;
             width: 100%;
@@ -175,7 +167,6 @@
         button:hover {
             opacity: 0.9;
             transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(51, 153, 255, 0.3);
         }
 
         .error {
@@ -184,41 +175,30 @@
             margin-bottom: 15px;
         }
     </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
+            const form = document.querySelector('form');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const errorDiv = document.createElement('div');
+            errorDiv.classList.add('error');
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+            form.addEventListener('submit', function (event) {
+                if (password.value !== confirmPassword.value) {
+                    event.preventDefault();
+                    errorDiv.textContent = "Passwords do not match!";
+                    if (!form.contains(errorDiv)) {
+                        form.insertBefore(errorDiv, form.firstChild);
                     }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.table-container').forEach((container, index) => {
-                container.style.opacity = '0';
-                container.style.transform = 'translateY(20px)';
-                container.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
-                observer.observe(container);
-            });
-
-            const buttons = document.querySelectorAll('button');
-            buttons.forEach(button => {
-                button.addEventListener('focus', () => {
-                    button.style.transform = 'translateY(-1px)';
-                });
-                button.addEventListener('blur', () => {
-                    button.style.transform = 'translateY(0)';
-                });
+                } else {
+                    errorDiv.textContent = "";
+                }
             });
         });
     </script>
 </head>
+
 <body>
 <div class="main">
     <div class="content-box">
@@ -236,11 +216,13 @@
                 </a>
             </div>
         </div>
+
         <div class="scrollable-content">
             <div class="top-section">
                 <h1>Register</h1>
                 <div th:if="${error}" class="error" th:text="${error}"></div>
             </div>
+
             <div class="bottom-section">
                 <div class="form-container">
                     <form th:action="@{/patients/register}" method="post">
@@ -248,18 +230,25 @@
                             <label for="fullName">Full Name</label>
                             <input type="text" id="fullName" name="fullName" required>
                         </div>
+
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number</label>
+                            <input type="text" id="contactNumber" name="contactNumber" required>
+                        </div>
+
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" required>
                         </div>
+
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
-                        </div>
+                            <input type="password" class="form-control" id="password" name="password" required />                        </div>
+
                         <div class="form-group">
                             <label for="confirmPassword">Confirm Password</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
-                        </div>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />                        </div>
+
                         <button type="submit">Register</button>
                     </form>
                 </div>
