@@ -285,4 +285,12 @@ public class PatientController {
             return "patient-profile";
         }
     }
+    @GetMapping("/check-email")
+    @ResponseBody
+    public ResponseEntity<Boolean> checkEmailExists(@RequestParam String email) {
+        boolean exists = patientService.getPatientByEmail(email).isPresent();
+        return ResponseEntity.ok(exists);
+    }
+
+
 }

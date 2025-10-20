@@ -153,6 +153,38 @@
         .message { color: #28a745; }
         .error-field { color: var(--error-color); font-size: 0.9rem; margin-top: 5px; }
     </style>
+    <script>
+        async function checkEmailExistsProfile() {
+            const emailInput = document.getElementById("email");
+            const emailMessage = document.getElementById("emailMessage");
+            const currentEmail = /*[[${patient.email}]]*/ ''; // Thymeleaf will inject the current email
+
+            const email = emailInput.value.trim();
+            if (!email.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)) {
+                emailMessage.textContent = "⚠️ Enter a valid email format.";
+                emailMessage.style.color = "orange";
+                return;
+            }
+
+            // Only check if it's a *new* email
+            if (email !== currentEmail) {
+                const response = await fetch(`/patients/check-email?email=${encodeURIComponent(email)}`);
+                const exists = await response.json();
+
+                if (exists) {
+                    emailMessage.textContent = "⚠️ This email is already registered.";
+                    emailMessage.style.color = "red";
+                } else {
+                    emailMessage.textContent = "✅ Email available.";
+                    emailMessage.style.color = "green";
+                }
+            } else {
+                emailMessage.textContent = "";
+            }
+        }
+    </script>
+
+
 </head>
 <body>
 <div class="main">
@@ -205,9 +237,18 @@
 
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" th:field="*{email}" required />
-                        <div id="emailError" class="error-field"></div>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               class="form-control"
+                               th:value="${patient.email}"
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               title="Enter a valid email address"
+                               required
+                               oninput="checkEmailExistsProfile()">
+                        <div id="emailMessage" class="error" style="margin-top: 5px;"></div>
                     </div>
+
 
                     <div class="form-group">
                         <label for="contactNumber">Contact Number</label>

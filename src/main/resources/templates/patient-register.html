@@ -63,6 +63,32 @@
             font-size: 0.9rem;
         }
     </style>
+    <script>
+        async function checkEmailExists() {
+            const emailField = document.getElementById("email");
+            const email = emailField.value.trim();
+            const message = document.getElementById("emailMessage");
+
+            if (email === "") {
+                message.textContent = "";
+                return;
+            }
+
+            const response = await fetch(`/patients/check-email?email=${encodeURIComponent(email)}`);
+            const exists = await response.json();
+
+            if (exists) {
+                message.textContent = "⚠️ Email already registered. Please use another.";
+                message.style.color = "red";
+                emailField.setCustomValidity("Email already registered");
+            } else {
+                message.textContent = "✅ Email available.";
+                message.style.color = "green";
+                emailField.setCustomValidity("");
+            }
+        }
+    </script>
+
 </head>
 <body>
 <div class="form-container">
@@ -83,11 +109,17 @@
 
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email"
+            <input type="email"
+                   id="email"
+                   name="email"
+                   class="form-control"
                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                   title="Enter a valid email" required>
-            <div id="emailError" class="error"></div>
+                   title="Enter a valid email address"
+                   required
+                   oninput="checkEmailExists()">
+            <div id="emailMessage" class="error" style="margin-top: 5px;"></div>
         </div>
+
 
         <div class="form-group">
             <label for="password">Password</label>
