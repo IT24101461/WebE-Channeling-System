@@ -6,161 +6,577 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #e6f2ff, #ffffff);
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Header Navigation */
+        .header {
+            background-color: #ffffff;
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: #1a73e8;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .sidebar h2 {
-            font-size: 22px;
-            margin-bottom: 50px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .sidebar a {
+        .logo-section {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s ease;
         }
 
-        .sidebar a:hover, .sidebar a.active {
-            background-color: #155bb5;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .logo-icon {
+            font-size: 32px;
+            color: #5b6ef5;
         }
 
-        /* Main content */
-        .main {
-            margin-left: 240px;
-            flex: 1;
-            padding: 40px 50px;
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #5b6ef5;
+            line-height: 1.3;
         }
 
-        h1 {
-            color: #1a73e8;
-            font-size: 36px;
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .cards {
+        .nav-menu {
             display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
+            align-items: center;
+            gap: 30px;
+            flex: 1;
             justify-content: center;
         }
 
-        .card {
-            flex: 1 1 250px;
-            background-color: white;
-            border-radius: 20px;
-            padding: 30px 20px;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 35px rgba(0,0,0,0.18);
+        .nav-item:hover, .nav-item.active {
+            color: #5b6ef5;
         }
 
-        .card i {
-            font-size: 36px;
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 10px;
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #e5e7eb;
             border-radius: 50%;
-            color: #1a73e8;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .card h2 {
-            font-size: 44px;
-            margin-top: 30px;
-            margin-bottom: 10px;
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #ef4444;
+            font-weight: 500;
+            font-size: 15px;
+            transition: opacity 0.3s;
         }
 
-        .card p {
+        .logout-btn:hover {
+            opacity: 0.8;
+            color: #dc2626;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .avatar-circle i {
+            font-size: 50px;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .hero-section .subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .license-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             font-size: 16px;
-            color: #555;
+            opacity: 0.85;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            background-color: white;
+            padding: 50px 40px 30px;
+            margin: 0 auto;
+            max-width: 1400px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 20px;
+            padding: 40px 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            background: #5b6ef5;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Color variations for stat cards */
+        .stat-card.pending .stat-icon {
+            background: #f59e0b;
+        }
+
+        .stat-card.approved .stat-icon {
+            background: #10b981;
+        }
+
+        .stat-card.rejected .stat-icon {
+            background: #ef4444;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            padding: 0 40px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 35px;
+            text-align: center;
+            padding: 25px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d1d5db;
+        }
+
+        .chart-header i {
+            font-size: 24px;
+            color: #5b6ef5;
+        }
+
+        .chart-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
             margin: 0;
         }
 
-        /* Color-coded cards */
-        .pending { border-top: 5px solid #ff9800; }
-        .approved { border-top: 5px solid #28a745; }
-        .rejected { border-top: 5px solid #dc3545; }
+        .chart-container {
+            position: relative;
+            flex: 1;
+            min-height: 300px;
+        }
+
+        .chart-container canvas {
+            max-height: 350px;
+        }
 
         @media (max-width: 768px) {
-            .main {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero-section {
+                padding: 40px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 32px;
+            }
+
+            .stats-container {
                 padding: 30px 20px;
             }
-            .cards {
-                flex-direction: column;
-                align-items: center;
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                padding: 0 20px 30px;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>Admin Panel</h2>
-    <a th:href="@{/admin/dashboard}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a th:href="@{/admin/manage}"><i class="bi bi-person-badge"></i> Manage Doctors</a>
-    <a th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> Log Out</a>
+<!-- Header Navigation -->
+<div class="header">
+    <div class="logo-section">
+        <i class="bi bi-building logo-icon"></i>
+        <div class="logo-text">E-Channeling<br>Admin Portal</div>
+    </div>
+
+    <div class="nav-menu">
+        <a th:href="@{/admin/dashboard}" class="nav-item active">
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+        </a>
+        <a th:href="@{/admin/manage}" class="nav-item">
+            <i class="bi bi-person-badge"></i>
+            Manage Doctors
+        </a>
+    </div>
+
+    <div class="user-section">
+        <div class="user-info">
+            <div class="user-icon">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            Admin User
+        </div>
+        <a th:href="@{/admin/logout}" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+        </a>
+    </div>
 </div>
 
-<div class="main">
-    <h1>Admin Dashboard</h1>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="avatar-circle">
+        <i class="bi bi-shield-check"></i>
+    </div>
+    <h1>Welcome, Admin</h1>
+    <div class="subtitle">System Administrator</div>
+    <div class="license-info">
+        <i class="bi bi-shield-fill-check"></i>
+        Admin Dashboard
+    </div>
+</div>
 
-    <div class="cards">
-        <div class="card pending">
-            <i class="bi bi-clock-history"></i>
-            <h2 th:text="${pendingCount}">0</h2>
-            <p>Pending Doctors</p>
+<!-- Stats Cards -->
+<div class="stats-container">
+    <div class="stats-grid">
+        <div class="stat-card pending">
+            <div class="stat-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" th:text="${pendingCount}">0</div>
+                <div class="stat-label">Pending Doctors</div>
+            </div>
         </div>
-        <div class="card approved">
-            <i class="bi bi-check-circle"></i>
-            <h2 th:text="${approvedCount}">0</h2>
-            <p>Approved Doctors</p>
+
+        <div class="stat-card approved">
+            <div class="stat-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" th:text="${approvedCount}">0</div>
+                <div class="stat-label">Approved Doctors</div>
+            </div>
         </div>
-        <div class="card rejected">
-            <i class="bi bi-x-circle"></i>
-            <h2 th:text="${rejectedCount}">0</h2>
-            <p>Rejected Doctors</p>
+
+        <div class="stat-card rejected">
+            <div class="stat-icon">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number" th:text="${rejectedCount}">0</div>
+                <div class="stat-label">Rejected Doctors</div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Charts Section -->
+<div class="charts-section">
+    <h2 class="section-title">Doctor Statistics Overview</h2>
+
+    <div class="charts-grid">
+        <!-- Pie Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <i class="bi bi-pie-chart-fill"></i>
+                <h3>Distribution by Status</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <i class="bi bi-bar-chart-fill"></i>
+                <h3>Doctor Status Comparison</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    // Get data from Thymeleaf
+    const pendingCount = /*[[${pendingCount}]]*/ 0;
+    const approvedCount = /*[[${approvedCount}]]*/ 0;
+    const rejectedCount = /*[[${rejectedCount}]]*/ 0;
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Pending', 'Approved', 'Rejected'],
+            datasets: [{
+                data: [pendingCount, approvedCount, rejectedCount],
+                backgroundColor: [
+                    '#f59e0b',
+                    '#10b981',
+                    '#ef4444'
+                ],
+                borderWidth: 3,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return label + ': ' + value + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Pending', 'Approved', 'Rejected'],
+            datasets: [{
+                label: 'Number of Doctors',
+                data: [pendingCount, approvedCount, rejectedCount],
+                backgroundColor: [
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(239, 68, 68, 0.8)'
+                ],
+                borderColor: [
+                    '#f59e0b',
+                    '#10b981',
+                    '#ef4444'
+                ],
+                borderWidth: 2,
+                borderRadius: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 13,
+                            weight: '600'
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Doctors: ' + context.parsed.y;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

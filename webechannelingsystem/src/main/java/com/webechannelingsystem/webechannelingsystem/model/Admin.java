@@ -9,7 +9,7 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AdminID")
-    private Long id;
+    private Integer id;
 
     @Column(name = "FullName")
     private String fullName;
@@ -20,7 +20,7 @@ public class Admin {
     @Column(name = "Number")
     private String number;
 
-    @Column(name = "Username")
+    @Column(name = "Username", length = 50)
     private String username;
 
     @Column(name = "Password")
@@ -28,8 +28,8 @@ public class Admin {
 
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

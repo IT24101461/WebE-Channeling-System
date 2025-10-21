@@ -2,77 +2,363 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login - E-Channeling Center</title>
+    <title>Emergency Register - E-Channeling Center</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root{
+            --bg-grad-start: #667eea;
+            --bg-grad-end: #764ba2;
+            --card-bg: rgba(255,255,255,0.92);
+            --card-glass: rgba(255,255,255,0.06);
+            --primary: #4f46e5;
+            --accent: #7c3aed;
+            --muted: #6b7280;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow-sm: 0 6px 18px rgba(16,24,40,0.08);
+            --shadow-lg: 0 20px 40px rgba(2,6,23,0.18);
+            --radius-lg: 14px;
         }
 
-        body, html {
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e6f2ff; /* light blue */
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+            margin:0;
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, var(--bg-grad-start) 0%, var(--bg-grad-end) 100%);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 2rem;
+            color:#111827;
         }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
+        /* background subtle pattern / glow */
+        .page-wrap{
+            width:100%;
+            max-width:1100px;
         }
 
-        .login-card {
-            background-color: white;
-            padding: 50px 40px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            width: 400px;
+        /* Outer card container */
+        .auth-card {
+            width:100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+            border-radius: calc(var(--radius-lg) + 6px);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        h2 {
+        /* Inner content wrapper for centering and layout */
+        .auth-inner {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        /* Left side: visual / brand */
+        .auth-side {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.02));
+            border-radius: 10px;
+            padding: 2rem;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+            overflow:hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-bubble {
+            width:120%;
+            height:160px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+            position:absolute;
+            top:-20px;
+            left:-10%;
+            transform: rotate(-6deg);
+            border-radius: 16px;
+        }
+
+        .logo {
+            z-index:2;
+            width:100%;
+            text-align:center;
+            margin-bottom: 1rem;
+        }
+        .logo .avatar {
+            width:84px;
+            height:84px;
+            border-radius:50%;
+            background: linear-gradient(135deg, #ffffff66, rgba(255,255,255,0.05));
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            color:white;
+            box-shadow: 0 6px 18px rgba(99,102,241,0.12);
+            border: 2px solid rgba(255,255,255,0.08);
+        }
+        .brand-title {
+            z-index:2;
+            margin-top: 12px;
+            color: #fff;
+            font-size:20px;
+            font-weight:600;
+            letter-spacing:0.2px;
+        }
+        .brand-sub {
+            margin-top:6px;
+            color: rgba(255,255,255,0.9);
+            font-size:13px;
+            opacity:0.95;
             text-align: center;
-            color: #1a73e8;
-            margin-bottom: 30px;
+            max-width: 280px;
+        }
+
+        .logo .avatar svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        /* Right side: forms */
+        .auth-forms {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+            min-height: 360px;
+            display:flex;
+            flex-direction:column;
+            position:relative;
+            overflow:hidden;
+        }
+
+        /* top toggle */
+        .tab-toggle {
+            display:flex;
+            gap:8px;
+            align-items:center;
+            justify-content:flex-start;
+            margin-bottom: 18px;
+        }
+
+        .tab {
+            appearance:none;
+            border: none;
+            background: transparent;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight:600;
+            cursor:pointer;
+            color:var(--muted);
+            transition: all .25s ease;
+            letter-spacing:0.2px;
+        }
+
+        .tab.active {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 8px 20px rgba(99,102,241,0.18);
+            transform: translateY(-2px);
+        }
+
+        /* sliding forms area */
+        .forms-wrap {
+            position:relative;
+            width:100%;
+            height:100%;
+            overflow:hidden;
+        }
+
+        .forms-slider {
+            display:flex;
+            width:200%; /* two forms */
+            transition: transform .45s cubic-bezier(.2,.9,.3,1);
+            transform: translateX(0%);
+        }
+
+        .form-panel {
+            width:50%;
+            padding: 12px 8px 8px 8px;
+            min-height: 260px;
+        }
+
+        form {
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+        }
+
+        h2.form-head {
+            font-size:18px;
+            margin:0;
+            color:#111827;
+            font-weight:700;
+        }
+
+        .note {
+            font-size:13px;
+            color:var(--muted);
+            margin-top:-6px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            display:flex;
+            flex-direction:column;
+            gap:6px;
         }
 
         label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold;
+            font-size:13px;
+            font-weight:600;
+            color:#374151;
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"]{
+            padding: 12px 14px;
+            border-radius:10px;
+            border:1px solid #e6e9ef;
+            background: #fff;
+            outline: none;
+            font-size:14px;
+            transition: box-shadow .18s ease, border-color .18s ease;
+            box-shadow: 0 2px 6px rgba(11,15,34,0.04);
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #1a73e8;
-            color: white;
-            font-size: 18px;
+        input:focus{
+            border-color: rgba(99,102,241,0.9);
+            box-shadow: 0 8px 20px rgba(99,102,241,0.08);
+        }
+
+        .row {
+            display:flex;
+            gap:10px;
+        }
+        .col {
+            flex:1;
+        }
+
+        .btn-primary {
+            padding: 12px 14px;
+            border-radius: 10px;
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: #fff;
+            font-weight:700;
+            cursor:pointer;
+            box-shadow: 0 10px 30px rgba(99,102,241,0.12);
+            transition: transform .16s ease, box-shadow .16s ease;
+            align-items: center;
+        }
+        .btn-primary:hover{ transform: translateY(-2px) }
+
+        .signup-link {
+            text-align:center;
+            font-size:13px;
+            color:var(--muted);
+            margin-top:6px;
         }
 
-        button:hover {
-            background-color: #155ab6;
-        }
-        .hidden {
+        .signup-link a{ color: var(--primary); font-weight:600; text-decoration:none }
+
+        /* Validation styles */
+        .error-msg {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 4px;
             display: none;
+            font-weight: 500;
+        }
+        .error-msg.show { display: block; }
+
+        input.invalid {
+            border-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        /* Password strength meter */
+        .password-strength {
+            margin-top: 6px;
+        }
+        .strength-bar {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background 0.3s ease;
+            border-radius: 4px;
+        }
+        .strength-fill.weak { width: 33%; background: #ef4444; }
+        .strength-fill.medium { width: 66%; background: #f59e0b; }
+        .strength-fill.strong { width: 100%; background: #10b981; }
+
+        .strength-text {
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .strength-text.weak { color: #ef4444; }
+        .strength-text.medium { color: #f59e0b; }
+        .strength-text.strong { color: #10b981; }
+
+        .strength-tips {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* notifications (kept same placeholders using Thymeleaf) */
+        .notification {
+            position: relative;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-weight:600;
+            font-size:13px;
+        }
+        .notification.success { background: #ecfdf5; color: #065f46; border:1px solid rgba(6,95,70,0.06) }
+        .notification.error { background: #fff1f2; color: #9b1c1c; border:1px solid rgba(239,68,68,0.06) }
+
+        /* small helper */
+        .muted-small { font-size:13px; color:var(--muted) }
+
+        /* responsive tweaks */
+        @media (max-width: 980px){
+            .auth-inner { grid-template-columns: 1fr; }
+            .auth-side { order:2; padding:1.5rem }
+            .auth-forms { order:1; }
+            .forms-slider { width:200% }
+            .form-panel { width:100% }
+        }
+
+        @media (max-width: 520px){
+            body { padding: 1rem }
+            .auth-card { padding: 1rem }
+            .auth-side { display:none } /* hide left visual on very small screens */
+            .auth-forms { padding: 16px }
+            .tab-toggle { justify-content:center }
+            .form-head { text-align:center }
         }
 
     </style>
@@ -81,43 +367,177 @@
     </script>
 </head>
 <body>
-<div class="container">
-    <div class="login-card">
-        <!-- Login Form -->
-        <form id="login-form" th:action="@{/emergency/register}" method="post">
-            <h2>Emergency Register</h2>
-            <div class="form-group">
-                <label for="patient-name">Patient Name</label>
-                <input type="text" id="patient-name" name="patientName" placeholder="Enter Patient Name" required>
-            </div>
-            <div class="form-group">
-                <label for="patient-email">Patient Email</label>
-                <input type="text" id="patient-email" name="patientEmail" placeholder="Enter Patient Email" required>
-            </div>
-            <div class="form-group">
-                <label for="patient-contact-number">Patient Contact Number</label>
-                <input type="text" id="patient-contact-number" name="patientContactNumber" placeholder="Enter Patient Contact Number" required>
-            </div>
-            <div class="form-group">
-                <label for="patient-age">Patient Age</label>
-                <input type="text" id="patient-age" name="patientAge" placeholder="Enter Patient Age" required>
-            </div>
-            <div class="form-group">
-                <label for="patient-gender">Patient Gender</label>
-                <input type="text" id="patient-gender" name="patientGender" placeholder="Enter Patient Gender" required>
-            </div>
-            <div class="form-group">
-                <label for="patient-issues">Patient’s Symptoms</label>
-                <textarea id="patient-issues" name="patientIssues" rows="5" cols="40" placeholder="Enter Patient Issues" required></textarea>
-            </div>
-            <button type="submit">Register</button>
-        </form> <br></br>
+<div class="page-wrap">
+    <div class="auth-card">
+        <div class="auth-inner">
 
-        <form th:action="@{/emergency/emergency-cases}" method="get">
-            <button type="submit">Load All Emergencies</button>
-        </form>
+            <div class="auth-side" aria-hidden="true">
+                <div class="brand-bubble"></div>
+                <div class="logo">
+                    <div class="avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-1 14h2v-2h-2v2zm0-4h2V7h-2v5z"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" opacity="0.3"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="brand-title">Emergency Register</div>
+                <div class="brand-sub">Report Emergency Cases • View All Available Emergency Cases</div>
 
-    </div>
-</div>
+                <!-- subtle stats or icons could go here -->
+            </div>
+            <div class="auth-forms">
+                <div class="forms-wrap">
+            <div class="login-card">
+                <!-- Login Form -->
+                <form id="emergency-form" th:action="@{/emergency/register}" method="post">
+                    <div>
+                        <h2 class="form-head">Emergency Register</h2>
+                        <div class="note muted-small">Place to Report an Emergency Case</div>
+                    </div>
+
+                    <!-- Thymeleaf notifications (kept as-is) -->
+                    <div th:if="${message}" class="notification success" th:text="${message}"></div>
+
+                    <div class="form-group">
+                        <label for="patient-name">Patient's Name</label>
+                        <input type="text" id="patient-name" name="patientName" placeholder="Enter Patient's Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-email">Patient's Email</label>
+                        <input type="text" id="patient-email" name="patientEmail" placeholder="Enter Patient's Email" required>
+                        <div class="error-msg" id="email-error">Please enter a valid email address with @</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-contact-number">Patient's Contact Number</label>
+                        <input type="text" id="patient-contact-number" name="patientContactNumber" placeholder="Enter Patient's Contact Number" required>
+                        <div class="error-msg" id="phone-error">Phone number must be exactly 10 digits</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-age">Patient's Age</label>
+                        <input type="text" id="patient-age" name="patientAge" placeholder="Enter Patient's Age" required>
+                        <div class="error-msg" id="age-error">Age must be maximum 3 digits</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-gender">Patient's Gender</label>
+<!--                        <input type="text" id="patient-gender" name="patientGender" placeholder="Enter Patient's Gender" required>-->
+
+                        <select id="patient-gender" name="patientGender" required>
+                            <option value="">-- Select --</option>
+                            <option value="MALE">MALE</option>
+                            <option value="FEMALE">FEMALE</option>
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-issues">Patient’s Symptoms</label>
+                        <textarea id="patient-issues" name="patientIssues" rows="5" cols="40" placeholder="Enter the Symptoms" required></textarea>
+                    </div>
+                    <div align="center">
+                        <button type="submit" class="btn-primary">Register</button>
+                        <button type="reset" class="btn-primary">Reset</button>
+                        <button type="button" class="btn-primary" th:onclick="|window.location='@{/}'|">Back to Home</button>
+                        <button type="button" class="btn-primary" th:onclick="|window.location='@{/emergency/emergency-cases}'|">View All Emergencies</button>
+                    </div>
+
+                </form>
+            </div>
+                </div> <!-- .forms-wrap -->
+            </div> <!-- .auth-forms -->
+        </div> <!-- .auth-inner -->
+    </div> <!-- .auth-card -->
+</div> <!-- .page-wrap -->
+
+<script>
+
+    // Validation for Emergency form
+    (function(){
+        const emailInput = document.getElementById('patient-email');
+        const phoneInput = document.getElementById('patient-contact-number');
+        const ageInput = document.getElementById('patient-age');
+        const emergencyForm = document.getElementById('emergency-form');
+
+        // Email validation
+        emailInput.addEventListener('blur', function() {
+            const emailError = document.getElementById('email-error');
+            if (!this.value.includes('@')) {
+                this.classList.add('invalid');
+                emailError.classList.add('show');
+            } else {
+                this.classList.remove('invalid');
+                emailError.classList.remove('show');
+            }
+        });
+
+        emailInput.addEventListener('input', function() {
+            if (this.value.includes('@')) {
+                this.classList.remove('invalid');
+                document.getElementById('email-error').classList.remove('show');
+            }
+        });
+
+        // Phone number validation - only digits, max 10
+        phoneInput.addEventListener('input', function() {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/\D/g, '');
+
+            const phoneError = document.getElementById('phone-error');
+            if (this.value.length > 0 && this.value.length !== 10) {
+                this.classList.add('invalid');
+                phoneError.classList.add('show');
+            } else {
+                this.classList.remove('invalid');
+                phoneError.classList.remove('show');
+            }
+        });
+
+        // Age validation - only digits, max 3
+        ageInput.addEventListener('input', function() {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/\D/g, '');
+
+            const ageError = document.getElementById('age-error');
+            if (this.value.length > 0 && this.value.length > 3) {
+                this.classList.add('invalid');
+                ageError.classList.add('show');
+            } else {
+                this.classList.remove('invalid');
+                ageError.classList.remove('show');
+            }
+        });
+
+        // Form submission validation
+        emergencyForm.addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Validate email
+            if (!emailInput.value.includes('@')) {
+                emailInput.classList.add('invalid');
+                document.getElementById('email-error').classList.add('show');
+                isValid = false;
+            }
+
+            // Validate phone
+            if (phoneInput.value.length !== 10) {
+                phoneInput.classList.add('invalid');
+                document.getElementById('phone-error').classList.add('show');
+                isValid = false;
+            }
+
+            // Validate Age
+            if (ageInput.value.length > 3) {
+                ageInput.classList.add('invalid');
+                document.getElementById('age-error').classList.add('show');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+        });
+    })();
+</script>
+
 </body>
 </html>

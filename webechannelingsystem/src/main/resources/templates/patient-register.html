@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Registration - E-Channeling Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+            --gradient-start: #ffffff;
+            --gradient-end: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(to right, rgb(173, 147, 255), rgb(94, 164, 174));
+            overflow: hidden;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content-box {
+            width: 1200px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-bar {
+            background: linear-gradient(90deg, #f8f9fa, #e9ecef);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            height: 60px;
+        }
+
+        .top-bar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .top-bar .brand i {
+            font-size: 28px;
+            color: var(--primary-color);
+        }
+
+        .top-bar .actions {
+            display: flex;
+            gap: 20px;
+            white-space: nowrap;
+        }
+
+        .top-bar .actions a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            transition: color 0.3s ease;
+        }
+
+        .top-bar .actions a:hover {
+            color: var(--primary-color);
+        }
+
+        .scrollable-content {
+            height: calc(100% - 60px);
+            overflow-y: auto;
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-section {
+            background: linear-gradient(135deg, rgb(109, 77, 255) 0%, rgb(108, 94, 207) 100%);
+            flex: 0 0 auto;
+            position: relative;
+            padding: 20px 50px 0;
+            box-sizing: border-box;
+        }
+
+        .bottom-section {
+            background-color: #ffffff;
+            flex: 1 1 auto;
+            position: relative;
+            padding: 20px 50px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: white;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(90deg, #3399ff, #0066cc);
+            color: white;
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(51, 153, 255, 0.3);
+        }
+
+        .error {
+            color: var(--error-color);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.table-container').forEach((container, index) => {
+                container.style.opacity = '0';
+                container.style.transform = 'translateY(20px)';
+                container.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                observer.observe(container);
+            });
+
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('focus', () => {
+                    button.style.transform = 'translateY(-1px)';
+                });
+                button.addEventListener('blur', () => {
+                    button.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="main">
+    <div class="content-box">
+        <div class="top-bar">
+            <div class="brand">
+                <i class="bi bi-hospital"></i>
+                E-Channeling Portal
+            </div>
+            <div class="actions">
+                <a th:href="@{/patients/login}">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a th:href="@{/patients/register}">
+                    <i class="bi bi-person-plus"></i> Register
+                </a>
+            </div>
+        </div>
+        <div class="scrollable-content">
+            <div class="top-section">
+                <h1>Register</h1>
+                <div th:if="${error}" class="error" th:text="${error}"></div>
+            </div>
+            <div class="bottom-section">
+                <div class="form-container">
+                    <form th:action="@{/patients/register}" method="post">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <button type="submit">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -2,22 +2,23 @@ package com.webechannelingsystem.webechannelingsystem.controller;
 
 import com.webechannelingsystem.webechannelingsystem.model.Admin;
 import com.webechannelingsystem.webechannelingsystem.repository.AdminRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminAuthController {
 
-    @Autowired
-    private AdminRepository adminRepository;
+    private final AdminRepository adminRepository;
 
-//    @Autowired
-//    public AdminAuthController(AdminRepository adminRepository) {
-//        this.adminRepository = adminRepository;
-//    }
+    public AdminAuthController(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
+    }
 
     // Show login/signup page
     @GetMapping("/login")
@@ -29,12 +30,15 @@ public class AdminAuthController {
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        Model model) {
+                        Model model,
+                        HttpSession session) {
 
         Admin admin = adminRepository.findByUsername(username).orElse(null);
 
         if (admin != null && admin.getPassword().equals(password)) {
             // Login successful, redirect to admin dashboard (pending doctors page)
+            session.setAttribute("loggedInAdmin", admin);
+
             return "redirect:/admin/dashboard";
         } else {
             // Login failed
@@ -58,6 +62,8 @@ public class AdminAuthController {
             return "login";
         }
 
+
+
         Admin admin = new Admin();
         admin.setFullName(fullName);
         admin.setEmail(email);
@@ -65,9 +71,18 @@ public class AdminAuthController {
         admin.setUsername(username);
         admin.setPassword(password);
 
+        System.out.println("🚀 Signup request received for: ");
         adminRepository.save(admin);
 
         model.addAttribute("message", "Signup successful! You can now login.");
         return "login"; // redirect to login form
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // clear session
+        return "redirect:/admin/login?logout"; // back to login page
+    }
+
 }
+

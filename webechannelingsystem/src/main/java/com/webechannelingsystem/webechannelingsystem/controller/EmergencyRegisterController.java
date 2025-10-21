@@ -7,6 +7,7 @@ import com.webechannelingsystem.webechannelingsystem.repository.AdminRepository;
 import com.webechannelingsystem.webechannelingsystem.service.AdminService;
 import com.webechannelingsystem.webechannelingsystem.service.EmergencyRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +22,12 @@ public class EmergencyRegisterController {
     private EmergencyRegisterService emergencyRegisterService;
 
     @Autowired
-    private EmailService emailService;
+    private AdminService adminService;
 
     @Autowired
-    private AdminService adminService;
+    private JavaMailSender mailSender;
+
+//    private EmailService emailService = EmailService.getInstance(mailSender);
 
 //    @Autowired
 //    public AdminAuthController(AdminRepository adminRepository) {
@@ -85,10 +88,13 @@ public class EmergencyRegisterController {
 
         // Iterate over all emails and notify them
         allDoctorEmails.forEach(
-              email ->  emailService.sendSimpleEmail(email, "New Emergency", emailContent)
+              email ->  EmailService.getInstance(mailSender).sendSimpleEmail(email, "New Emergency has been reported.", emailContent)
         );
 
-        return "redirect:/";
+//        emailService.sendSimpleEmail((String[]) allDoctorEmails.toArray(), "New Emergency has been reported.", emailContent);
+
+        model.addAttribute("message", "Emergency Case Registered Successfully!.");
+        return "EmergencyRegister";
     }
 
     private String generateEmailContent(Emergency emergencySaved){

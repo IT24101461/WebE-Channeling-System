@@ -1,33 +1,40 @@
 package com.webechannelingsystem.webechannelingsystem.controller;
 
+import com.webechannelingsystem.webechannelingsystem.model.Admin;
 import com.webechannelingsystem.webechannelingsystem.model.Doctor;
 import com.webechannelingsystem.webechannelingsystem.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Controller
 public class AdminDashboardController {
 
-    @Autowired
-    private DoctorRepository doctorRepository;
+    private final DoctorRepository doctorRepository;
 
-//    @Autowired
-//    public AdminDashboardController(DoctorRepository doctorRepository) {
-//        this.doctorRepository = doctorRepository;
-//    }
+    public AdminDashboardController(DoctorRepository doctorRepository) {
+        this.doctorRepository = doctorRepository;
+    }
 
     // Dashboard showing counts
     @GetMapping("/admin/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(Model model, HttpSession session) {
+        // Check if admin is logged in
+        Admin loggedInAdmin = (Admin) session.getAttribute("loggedInAdmin");
+        if (loggedInAdmin == null) {
+            // Not logged in → redirect to login page
+            return "redirect:/admin/login";
+        }
+
+        // Counts for doctors
         long pendingCount = doctorRepository.countByStatus("PENDING");
         long approvedCount = doctorRepository.countByStatus("APPROVED");
         long rejectedCount = doctorRepository.countByStatus("REJECTED");
 
+        // Add attributes to model
         model.addAttribute("pendingCount", pendingCount);
         model.addAttribute("approvedCount", approvedCount);
         model.addAttribute("rejectedCount", rejectedCount);
@@ -37,7 +44,15 @@ public class AdminDashboardController {
 
     // Manage page showing all doctors lists
     @GetMapping("/admin/manage")
-    public String manageDoctors(Model model) {
+    public String manageDoctors(Model model, HttpSession session) {
+
+        // Check if admin is logged in
+        Admin loggedInAdmin = (Admin) session.getAttribute("loggedInAdmin");
+        if (loggedInAdmin == null) {
+            // Not logged in → redirect to login page
+            return "redirect:/admin/login";
+        }
+
         List<Doctor> pendingDoctors = doctorRepository.findByStatus("PENDING");
         List<Doctor> approvedDoctors = doctorRepository.findByStatus("APPROVED");
         List<Doctor> rejectedDoctors = doctorRepository.findByStatus("REJECTED");
@@ -48,4 +63,5 @@ public class AdminDashboardController {
 
         return "admin-manage"; // adminManage.html
     }
+
 }

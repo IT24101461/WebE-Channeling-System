@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Profile - E-Channeling Center</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Header Navigation */
+        .header {
+            background-color: #ffffff;
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            color: #5b6ef5;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #5b6ef5;
+            line-height: 1.3;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #5b6ef5;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #ef4444;
+            font-weight: 500;
+            font-size: 15px;
+            transition: opacity 0.3s;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.8;
+            color: #dc2626;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .avatar-circle i {
+            font-size: 50px;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .hero-section .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .main-content {
+            background-color: white;
+            margin: 0 auto;
+            max-width: 900px;
+            padding: 50px 60px;
+            min-height: calc(100vh - 400px);
+            border-radius: 0;
+        }
+
+        /* Profile Card */
+        .profile-section {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #5b6ef5;
+        }
+
+        .section-header i {
+            font-size: 28px;
+            color: #5b6ef5;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        /* Profile Info Grid */
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .info-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #5b6ef5, #4c5fdc);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-right: 18px;
+        }
+
+        .info-icon i {
+            font-size: 20px;
+            color: white;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .status-approved {
+            background-color: #d1fae5;
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            justify-content: flex-end;
+        }
+
+        .btn-action {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-back {
+            background-color: #5b6ef5;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background-color: #4c5fdc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(91, 110, 245, 0.4);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero-section {
+                padding: 40px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 32px;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .profile-section {
+                padding: 25px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header Navigation -->
+<div class="header">
+    <div class="logo-section">
+        <i class="bi bi-building logo-icon"></i>
+        <div class="logo-text">E-Channeling<br>Admin Portal</div>
+    </div>
+
+    <div class="nav-menu">
+        <a th:href="@{/admin/dashboard}" class="nav-item">
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+        </a>
+        <a th:href="@{/admin/manage}" class="nav-item active">
+            <i class="bi bi-person-badge"></i>
+            Manage Doctors
+        </a>
+    </div>
+
+    <div class="user-section">
+        <div class="user-info">
+            <div class="user-icon">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            Admin User
+        </div>
+        <a th:href="@{/admin/logout}" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+        </a>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="avatar-circle">
+        <i class="bi bi-person-vcard"></i>
+    </div>
+    <h1>Doctor Profile</h1>
+    <div class="subtitle">Detailed information and credentials</div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="profile-section">
+        <div class="section-header">
+            <i class="bi bi-person-badge-fill"></i>
+            <h2 th:text="${doctor.fullName}">Doctor Name</h2>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value" th:text="${doctor.email}">doctor@example.com</div>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="bi bi-telephone-fill"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value" th:text="${doctor.number}">+94 123456789</div>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Username</div>
+                    <div class="info-value" th:text="${doctor.username}">doctoruser</div>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Specialization</div>
+                    <div class="info-value" th:text="${doctor.specialization}">Cardiology</div>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Account Status</div>
+                    <div class="info-value">
+                        <span class="status-badge"
+                              th:classappend="${doctor.status == 'PENDING'} ? 'status-pending' : (${doctor.status == 'APPROVED'} ? 'status-approved' : 'status-rejected')"
+                              th:text="${doctor.status}">APPROVED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a th:href="@{/admin/manage}" class="btn-action btn-back">
+                <i class="bi bi-arrow-left"></i>
+                Back to Manage Doctors
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

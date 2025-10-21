@@ -10,7 +10,7 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "DoctorID")
-    private Long id;
+    private Integer id;
 
     @Column(name = "FullName")
     private String fullName;
@@ -30,12 +30,12 @@ public class Doctor {
     @Column(name = "Specialization")
     private String specialization;
 
-    @Column(name = "Status")
+    @Column(name = "Status",length = 20)
     private String status = "PENDING";  // default value
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

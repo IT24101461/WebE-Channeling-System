@@ -5,113 +5,418 @@
     <title>Welcome to E-Channeling Center</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Optional: custom CSS for hospital theme -->
+    <!-- Bootstrap icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <style>
-        body {
-            background: #e6f2ff; /* light hospital blue */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .welcome-card {
-            background: #ffffff;
-            padding: 60px 40px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 36px;
+            color: #5b6ef5;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #5b6ef5;
+            line-height: 1.3;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            margin-bottom: 50px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        /* Portal Cards Container */
+        .portals-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .portals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .portal-card.portal-patient {
+            grid-column: 3 / 4;
+            grid-row: 1;
+        }
+
+        .portal-card.portal-emergency {
+            grid-column: 2 / 3;
+            grid-row: 2;
+        }
+
+        /* Portal Card */
+        .portal-card {
+            background: white;
             border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-            max-width: 750px;
-            width: 100%;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--card-color-1), var(--card-color-2));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .portal-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .portal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        .portal-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             transition: transform 0.3s ease;
         }
 
-        .welcome-card:hover {
-            transform: translateY(-5px);
+        .portal-card:hover .portal-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
-        h1 {
+        .portal-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .portal-title {
+            font-size: 24px;
             font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
         }
 
-        p {
-            font-size: 1.1rem;
-            color: #555;
+        .portal-description {
+            font-size: 15px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        .btn-portal {
-            font-weight: 600;
-            font-size: 1rem;
-            border-radius: 12px;
-            padding: 12px 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
+        .portal-arrow {
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--card-color-1);
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: auto;
         }
 
-        .btn-portal:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        .portal-arrow i {
+            transition: transform 0.3s ease;
         }
 
-        .btn-admin {
-            background-color: #1a73e8;
-            color: #fff;
-        }
-        .btn-admin:hover { background-color: #155ab6; }
-
-        .btn-doctor {
-            background-color: #34a853;
-            color: #fff;
-        }
-        .btn-doctor:hover { background-color: #2a8440; }
-
-        .btn-patient {
-            background-color: #fbbc05;
-            color: #000;
-        }
-        .btn-patient:hover { background-color: #e0a800; }
-
-        .btn-emergency {
-            background-color: #dc3545;
-            color: #fff;
-            border: 2px solid #b02a37;
-        }
-        .btn-emergency:hover {
-            background-color: #b02a37;
-            color: #fff;
+        .portal-card:hover .portal-arrow i {
+            transform: translateX(5px);
         }
 
-        .btn-portal i {
-            font-size: 1.2rem;
+        /* Color schemes for each portal */
+        .portal-admin {
+            --card-color-1: #8b5cf6;
+            --card-color-2: #6d28d9;
         }
 
-        @media (max-width: 576px) {
-            .welcome-card { padding: 40px 20px; }
-            .btn-portal { width: 100%; justify-content: center; }
+        .portal-doctor {
+            --card-color-1: #3b82f6;
+            --card-color-2: #1d4ed8;
+        }
+
+        .portal-patient {
+            --card-color-1: #10b981;
+            --card-color-2: #059669;
+        }
+
+        .portal-emergency {
+            --card-color-1: #ef4444;
+            --card-color-2: #dc2626;
+        }
+
+        /* Features Section */
+        .features-section {
+            text-align: center;
+            padding-bottom: 60px;
+        }
+
+        .features-title {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 30px;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
+        }
+
+        .feature-item i {
+            font-size: 24px;
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .portals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .portal-card.portal-emergency {
+                grid-column: 1 / -1;
+                grid-row: auto;
+                max-width: 350px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .portals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portal-card.portal-emergency {
+                grid-column: 1;
+                grid-row: auto;
+                max-width: 100%;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
         }
     </style>
-    <!-- Optional: Bootstrap icons CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
 
-<div class="container d-flex flex-column justify-content-center align-items-center vh-100">
-    <div class="welcome-card text-center">
-        <h1 class="mb-3 text-primary">Welcome to E-Channeling Center</h1>
-        <p class="mb-4 text-muted fs-5">Book appointments easily online with your favorite doctors.
-            Manage schedules efficiently and stay healthy!</p>
-        <div class="d-flex flex-wrap justify-content-center gap-3">
-            <a th:href="@{/admin/login}" class="btn btn-admin btn-portal">
-                <i class="bi bi-shield-lock"></i> Admin Portal
-            </a>
-            <a th:href="@{/doctor/login}" class="btn btn-doctor btn-portal">
-                <i class="bi bi-person-badge"></i> Doctor Portal
-            </a>
-            <a th:href="@{/patient/login}" class="btn btn-patient btn-portal">
-                <i class="bi bi-person-circle"></i> Patient Portal
-            </a>
-            <a th:href="@{/emergency/register}" class="btn btn-emergency btn-portal">
-                <i class="bi bi-exclamation-triangle-fill"></i> Emergency Patient
-            </a>
+<!-- Header -->
+<div class="header">
+    <div class="logo-section">
+        <i class="bi bi-hospital logo-icon"></i>
+        <div class="logo-text">E-Channeling<br>Center</div>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <h1 class="hero-title">Welcome to E-Channeling Center</h1>
+    <p class="hero-subtitle">
+        Book appointments easily online with your favorite doctors.
+        Manage schedules efficiently and experience quality healthcare at your fingertips.
+    </p>
+</div>
+
+<!-- Portal Cards -->
+<div class="portals-container">
+    <div class="portals-grid">
+        <!-- Admin Portal -->
+        <a th:href="@{/admin/login}" class="portal-card portal-admin">
+            <div class="portal-icon">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+            <h3 class="portal-title">Admin Portal</h3>
+            <p class="portal-description">
+                Review and approve qualified doctors to maintain service excellence.
+            </p>
+            <div class="portal-arrow">
+                Access Admin Panel
+                <i class="bi bi-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- Doctor Portal -->
+        <a th:href="@{/doctor/login}" class="portal-card portal-doctor">
+            <div class="portal-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
+            <h3 class="portal-title">Doctor Portal</h3>
+            <p class="portal-description">
+                Manage your profile, appointments, and patient consultations efficiently.
+            </p>
+            <div class="portal-arrow">
+                Login as Doctor
+                <i class="bi bi-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- Emergency Patient -->
+        <a th:href="@{/emergency/register}" class="portal-card portal-emergency">
+            <div class="portal-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h3 class="portal-title">Emergency Patient</h3>
+            <p class="portal-description">
+                Quick access for urgent medical consultations without registration.
+            </p>
+            <div class="portal-arrow">
+                Emergency Access
+                <i class="bi bi-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- Patient Portal -->
+        <a th:href="@{/patient-auth-choice}" class="portal-card portal-patient">
+            <div class="portal-icon">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <h3 class="portal-title">Patient Portal</h3>
+            <p class="portal-description">
+                Book appointments, view medical history, and connect with doctors.
+            </p>
+            <div class="portal-arrow">
+                Access Patient Portal
+                <i class="bi bi-arrow-right"></i>
+            </div>
+        </a>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <h3 class="features-title">Why Choose E-Channeling?</h3>
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="bi bi-clock-history"></i>
+                <span>24/7 Booking Available</span>
+            </div>
+            <div class="feature-item">
+                <i class="bi bi-shield-check"></i>
+                <span>Secure & Confidential</span>
+            </div>
+            <div class="feature-item">
+                <i class="bi bi-calendar-check"></i>
+                <span>Easy Appointment Management</span>
+            </div>
+            <div class="feature-item">
+                <i class="bi bi-lightning-charge"></i>
+                <span>Instant Confirmation</span>
+            </div>
         </div>
     </div>
 </div>

@@ -2,7 +2,8 @@ package com.webechannelingsystem.webechannelingsystem.service;
 
 import com.webechannelingsystem.webechannelingsystem.model.Doctor;
 import com.webechannelingsystem.webechannelingsystem.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.webechannelingsystem.webechannelingsystem.model.Doctor;
+import com.webechannelingsystem.webechannelingsystem.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.List;
 public class AdminService {
     private final DoctorRepository doctorRepository;
 
-    @Autowired
     public AdminService(DoctorRepository doctorRepository) {
         this.doctorRepository = doctorRepository;
     }
@@ -20,18 +20,28 @@ public class AdminService {
         return doctorRepository.findByStatus("PENDING");
     }
 
-    public Doctor approveDoctor(Long id) {
-        Doctor doctor = doctorRepository.findById(id).orElseThrow();
+    public Doctor approveDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findById(id.longValue()).orElseThrow();
         doctor.setStatus("APPROVED");
         return doctorRepository.save(doctor);
     }
 
-    public void rejectDoctor(Long id) {
-        Doctor doctor = doctorRepository.findById(id).orElseThrow();
+    public void rejectDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findById(id.longValue()).orElseThrow();
         doctor.setStatus("REJECTED");
         doctorRepository.save(doctor);
     }
 
+    public void deleteDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findById(id.longValue())
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID " + id));
+        doctorRepository.delete(doctor);
+    }
+
+    public Doctor getDoctorById(Integer id) {
+        return doctorRepository.findById(id.longValue())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+    }
 
     public List<String> findAllDoctorEmails(){
         return doctorRepository.findAllDoctorEmails();
