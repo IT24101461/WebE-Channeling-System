@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reschedule Appointment - E-Channeling Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e6f2ff;
+            padding: 40px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .reschedule-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .reschedule-header {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        .reschedule-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .appointment-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        .detail-value {
+            color: #1a73e8;
+            font-weight: 500;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn-reschedule {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            flex: 1;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            flex: 1;
+        }
+        .btn-reschedule:hover, .btn-cancel:hover {
+            opacity: 0.9;
+            color: white;
+        }
+        .appointment-id {
+            background: #1a73e8;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="reschedule-card">
+    <div class="reschedule-header">
+        <i class="bi bi-calendar-event reschedule-icon"></i>
+        <h2>Reschedule Appointment</h2>
+        <p class="text-muted">Select a new date and time for your appointment</p>
+    </div>
+
+    <div class="text-center mb-4">
+        <span class="appointment-id">Appointment ID: #<span th:text="${appointment.id}"></span></span>
+    </div>
+
+    <!-- Current Appointment Details -->
+    <div class="appointment-details">
+        <h5 class="text-center mb-3">Current Appointment Details</h5>
+        <div class="detail-row">
+            <span class="detail-label">Patient Name:</span>
+            <span class="detail-value" th:text="${patient.fullName}"></span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Doctor:</span>
+            <span class="detail-value" th:text="${appointment.doctor.fullName}"></span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Specialization:</span>
+            <span class="detail-value" th:text="${appointment.doctor.specialization}"></span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Current Date & Time:</span>
+            <span class="detail-value" th:text="${#temporals.format(appointment.appointmentTime, 'yyyy-MM-dd HH:mm')}"></span>
+        </div>
+    </div>
+
+    <!-- Reschedule Form -->
+    <form th:action="@{/patients/appointments/reschedule/{id}(id=${appointment.id}, email=${patient.email})}" method="post">
+        <div class="form-group">
+            <label for="newTime" class="form-label">New Appointment Date & Time</label>
+            <input type="datetime-local"
+                   class="form-control"
+                   id="newTime"
+                   name="newTime"
+                   th:value="${#temporals.format(appointment.appointmentTime, 'yyyy-MM-dd') + 'T' + #temporals.format(appointment.appointmentTime, 'HH:mm')}"
+                   required
+                   min="">
+            <small class="form-text text-muted">Please select a new date and time for your appointment</small>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-reschedule">
+                <i class="bi bi-check-circle"></i> Confirm Reschedule
+            </button>
+            <a th:href="@{/patients/dashboard(email=${patient.email})}" class="btn btn-cancel">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </div>
+    </form>
+
+    <div class="text-center mt-4">
+        <small class="text-muted">
+            <i class="bi bi-info-circle"></i>
+            Rescheduling will update your appointment to the new selected time.
+        </small>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const newTimeInput = document.getElementById('newTime');
+        if (newTimeInput) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            newTimeInput.min = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+    });
+</script>
+</body>
+</html>

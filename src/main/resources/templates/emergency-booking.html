@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Emergency Booking - E-Channeling Center</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .emergency-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .emergency-header {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .emergency-header h1 {
+      color: #dc3545;
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .emergency-badge {
+      background: linear-gradient(135deg, #dc3545, #ff6b6b);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .booking-form-card {
+      background: white;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: #667eea;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .doctor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .doctor-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doctor-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .doctor-card:hover {
+      border-color: #667eea;
+      background: white;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .doctor-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .doctor-card.selected {
+      border-color: #28a745;
+      background: #e8f5e9;
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+    }
+
+    .doctor-card.selected::before {
+      background: #28a745;
+      transform: scaleX(1);
+    }
+
+    .doctor-info h5 {
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .specialization-badge {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .doctor-card.selected .specialization-badge {
+      background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .doctor-contact {
+      color: #666;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .select-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .select-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .selected-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #28a745;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .doctor-card.selected .selected-indicator {
+      display: flex;
+      animation: checkmark 0.3s ease;
+    }
+
+    @keyframes checkmark {
+      0% { transform: scale(0) rotate(-45deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .booking-details-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin-top: 30px;
+      display: none;
+    }
+
+    .booking-details-section.show {
+      display: block;
+      animation: slideDown 0.4s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .selected-doctor-info {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #28a745;
+      margin-bottom: 20px;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    .back-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #5a6268;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .emergency-types {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .emergency-type-btn {
+      padding: 8px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 20px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .emergency-type-btn:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .emergency-type-btn.active {
+      border-color: #dc3545;
+      background: #dc3545;
+      color: white;
+    }
+
+    .info-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .doctor-availability {
+      color: #28a745;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+<div class="emergency-container">
+  <!-- Header -->
+  <div class="emergency-header">
+    <h1>
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      Emergency Appointment Booking
+    </h1>
+    <span class="emergency-badge">URGENT CARE - PRIORITY BOOKING</span>
+    <p class="text-muted mt-3 mb-0">Select a doctor immediately - No search required</p>
+  </div>
+
+  <!-- Back Button -->
+  <div class="mb-3">
+    <a th:href="@{/patients/dashboard(email=${email})}" class="back-btn">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <!-- Error Message -->
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-circle"></i> <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <!-- Booking Form -->
+  <div class="booking-form-card">
+    <form th:action="@{/patients/emergency-booking/book}" method="post" id="emergencyBookingForm">
+      <input type="hidden" name="patientEmail" th:value="${email}">
+      <input type="hidden" name="doctorId" id="selectedDoctorId" required>
+
+      <!-- Info Box -->
+      <div class="info-box">
+        <i class="bi bi-info-circle-fill"></i>
+        <strong>Emergency Booking:</strong> Select any available doctor below. Your request will be processed with high priority.
+      </div>
+
+      <!-- Step 1: Select Doctor -->
+      <div class="section-title">
+        <i class="bi bi-person-fill-check"></i> Step 1: Select Doctor
+      </div>
+
+      <div class="doctor-grid">
+        <div th:each="doctor : ${doctors}"
+             class="doctor-card"
+             th:attr="data-doctor-id=${doctor.id}, data-doctor-name=${doctor.fullName}, data-doctor-spec=${doctor.specialization}, data-doctor-email=${doctor.email}, data-doctor-number=${doctor.number}">
+
+          <span class="selected-indicator">
+            <i class="bi bi-check-lg"></i>
+          </span>
+
+          <div class="doctor-info">
+            <h5 th:text="${doctor.fullName}">Dr. John Doe</h5>
+            <span class="specialization-badge" th:text="${doctor.specialization}">Cardiology</span>
+
+            <div class="doctor-contact">
+              <i class="bi bi-envelope"></i> <span th:text="${doctor.email}">email@example.com</span>
+            </div>
+            <div class="doctor-contact">
+              <i class="bi bi-telephone"></i> <span th:text="${doctor.number} ?: 'Contact not available'">+123456789</span>
+            </div>
+            <div class="doctor-availability">
+              <i class="bi bi-check-circle-fill"></i> Available for Emergency
+            </div>
+          </div>
+
+          <button type="button" class="select-btn" onclick="selectDoctor(this)">
+            <i class="bi bi-hand-index"></i> Select Doctor
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Booking Details -->
+      <div class="booking-details-section" id="bookingDetails">
+        <div class="section-title">
+          <i class="bi bi-calendar-check"></i> Step 2: Emergency Details
+        </div>
+
+        <!-- Selected Doctor Info -->
+        <div class="selected-doctor-info" id="selectedDoctorInfo">
+          <strong>Selected Doctor:</strong>
+          <div id="doctorDetailsDisplay" class="mt-2"></div>
+        </div>
+
+        <!-- Emergency Type -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Emergency Type</label>
+          <div class="emergency-types">
+            <button type="button" class="emergency-type-btn" onclick="setEmergencyType('Critical Emergency')">
+              Critical Emergency
+            </button>
+            <button type="button" class="emergency-type-btn" onclick="setEmergencyType('Severe Pain')">
+              Severe Pain
+            </button>
+            <button type="button" class="emergency-type-btn" onclick="setEmergencyType('Accident/Injury')">
+              Accident/Injury
+            </button>
+            <button type="button" class="emergency-type-btn" onclick="setEmergencyType('Urgent Consultation')">
+              Urgent Consultation
+            </button>
+            <button type="button" class="emergency-type-btn" onclick="setEmergencyType('Other')">
+              Other
+            </button>
+          </div>
+          <input type="text" class="form-control mt-2" id="emergencyType" name="emergencyType"
+                 placeholder="Specify emergency type..." required>
+        </div>
+
+        <!-- Requested Time -->
+        <div class="mb-4">
+          <label for="requestedTime" class="form-label fw-bold">
+            <i class="bi bi-clock"></i> Preferred Date & Time
+          </label>
+          <input type="datetime-local" class="form-control" id="requestedTime"
+                 name="requestedTime" required>
+          <small class="text-muted">Select your preferred time. We'll try to accommodate as soon as possible.</small>
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="mb-4">
+          <label for="notes" class="form-label fw-bold">
+            <i class="bi bi-chat-left-text"></i> Additional Information (Optional)
+          </label>
+          <textarea class="form-control" id="notes" name="notes" rows="3"
+                    placeholder="Describe your emergency situation or any specific requirements..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">
+          <i class="bi bi-lightning-fill"></i> Confirm Emergency Booking
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  let selectedDoctorCard = null;
+
+  function selectDoctor(button) {
+    const card = button.closest('.doctor-card');
+    const doctorId = card.getAttribute('data-doctor-id');
+    const doctorName = card.getAttribute('data-doctor-name');
+    const doctorSpec = card.getAttribute('data-doctor-spec');
+    const doctorEmail = card.getAttribute('data-doctor-email');
+    const doctorNumber = card.getAttribute('data-doctor-number');
+
+    // Remove previous selection
+    if (selectedDoctorCard) {
+      selectedDoctorCard.classList.remove('selected');
+    }
+
+    // Add new selection
+    card.classList.add('selected');
+    selectedDoctorCard = card;
+
+    // Set hidden input
+    document.getElementById('selectedDoctorId').value = doctorId;
+
+    // Display selected doctor info
+    document.getElementById('doctorDetailsDisplay').innerHTML = `
+      <h6 class="mb-2">${doctorName}</h6>
+      <span class="specialization-badge">${doctorSpec}</span>
+      <div class="mt-2">
+        <small class="text-muted d-block"><i class="bi bi-envelope"></i> ${doctorEmail}</small>
+        <small class="text-muted d-block"><i class="bi bi-telephone"></i> ${doctorNumber || 'Contact not available'}</small>
+      </div>
+    `;
+
+    // Show booking details section
+    document.getElementById('bookingDetails').classList.add('show');
+
+    // Scroll to booking details
+    document.getElementById('bookingDetails').scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  function setEmergencyType(type) {
+    // Remove active class from all buttons
+    document.querySelectorAll('.emergency-type-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    // Add active class to clicked button
+    event.target.classList.add('active');
+
+    // Set input value
+    document.getElementById('emergencyType').value = type;
+  }
+
+  // Initialize datetime picker with current time
+  document.addEventListener('DOMContentLoaded', function() {
+    const requestedTimeInput = document.getElementById('requestedTime');
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    requestedTimeInput.min = now.toISOString().slice(0, 16);
+
+    // Set default to 30 minutes from now
+    const defaultTime = new Date(now.getTime() + 30 * 60000);
+    requestedTimeInput.value = defaultTime.toISOString().slice(0, 16);
+  });
+
+  // Form validation
+  document.getElementById('emergencyBookingForm').addEventListener('submit', function(e) {
+    const doctorId = document.getElementById('selectedDoctorId').value;
+    if (!doctorId) {
+      e.preventDefault();
+      alert('Please select a doctor first!');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

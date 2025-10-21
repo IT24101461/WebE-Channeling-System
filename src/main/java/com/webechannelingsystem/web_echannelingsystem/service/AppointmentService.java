@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -24,6 +25,13 @@ public class AppointmentService {
     public List<Appointment> getPastAppointments(Long patientId) {
         return appointmentRepository.findByPatientIdAndAppointmentTimeBeforeOrStatus(
                 patientId, LocalDateTime.now(), "COMPLETED");
+    }
+
+    // Permanently delete appointment
+    public void deleteAppointment(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        appointmentRepository.delete(appointment);
     }
 
     public Appointment cancelAppointment(Long appointmentId) {
@@ -50,4 +58,7 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
+    public Optional<Appointment> getAppointmentById(Long appointmentId) {
+        return appointmentRepository.findById(appointmentId);
+    }
 }
