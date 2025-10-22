@@ -94,7 +94,7 @@
 <div class="form-container">
     <h2>Patient Registration</h2>
 
-    <form th:action="@{/patients/register}" method="post" id="registerForm">
+    <form id="registerForm" action="javascript:void(0);">
 
         <div class="form-group">
             <label for="fullName">Full Name</label>
@@ -145,39 +145,59 @@
     const confirmPassword = document.getElementById('confirmPassword');
 
     form.addEventListener('submit', function(e) {
+        let valid = true;
+
         // Clear previous errors
         document.getElementById('passwordError').textContent = '';
         document.getElementById('contactError').textContent = '';
-        document.getElementById('emailError').textContent = '';
+        const emailMessage = document.getElementById('emailMessage');
+        emailMessage.textContent = '';
 
         // Password match
         if (passwordInput.value !== confirmPassword.value) {
             e.preventDefault();
-            document.getElementById('passwordError').textContent = "Passwords do not match!";
+            document.getElementById('passwordError').textContent = "❌ Passwords do not match!";
+            confirmPassword.focus();
+            valid = false;
         }
 
-        // Password requirements
+        // Password pattern
         const passPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
         if (!passPattern.test(passwordInput.value)) {
             e.preventDefault();
-            document.getElementById('passwordError').textContent = "Password must be at least 8 characters and contain letters and numbers.";
+            document.getElementById('passwordError').textContent =
+                "❌ Password must be at least 8 characters and contain letters and numbers.";
+            valid = false;
         }
 
-        // Contact number validation
-        const contactVal = document.getElementById('contactNumber').value;
+        // Contact validation
+        const contactVal = document.getElementById('contactNumber').value.trim();
         if (!/^07\d{8}$/.test(contactVal)) {
             e.preventDefault();
-            document.getElementById('contactError').textContent = "Contact number must be 10 digits starting with '07'.";
+            document.getElementById('contactError').textContent =
+                "❌ Contact number must be 10 digits starting with '07'.";
+            valid = false;
         }
 
         // Email validation
-        const emailVal = document.getElementById('email').value;
+        const emailVal = document.getElementById('email').value.trim();
         const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
         if (!emailPattern.test(emailVal)) {
             e.preventDefault();
-            document.getElementById('emailError').textContent = "Enter a valid email address.";
+            emailMessage.textContent = "❌ Enter a valid email address.";
+            valid = false;
+        }
+
+        // ✅ Submit to backend only if all validations passed
+        if (valid) {
+            form.removeAttribute("action");
+            form.setAttribute("action", "/patients/register");
+            form.setAttribute("method", "post");
+            form.submit();
         }
     });
 </script>
+
+
 </body>
 </html>

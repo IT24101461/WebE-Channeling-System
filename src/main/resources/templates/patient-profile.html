@@ -289,47 +289,64 @@
     const passwordInput = document.getElementById('password');
     const confirmPassword = document.getElementById('confirmPassword');
 
-    profileForm.addEventListener('submit', function(e) {
-        let hasError = false;
+    profileForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // stop default submit first
 
+        let valid = true;
+
+        // Clear previous messages
         document.getElementById('passwordError').textContent = '';
         document.getElementById('contactError').textContent = '';
-        document.getElementById('emailError').textContent = '';
+        document.getElementById('emailMessage').textContent = '';
 
-        // Password match
-        if (passwordInput.value && passwordInput.value !== confirmPassword.value) {
-            e.preventDefault();
-            document.getElementById('passwordError').textContent = "Passwords do not match!";
-            hasError = true;
-        }
+        // Password validation only if user entered something
+        const password = passwordInput.value.trim();
+        const confirm = confirmPassword.value.trim();
 
-        // Password requirements (if changed)
-        if (passwordInput.value) {
+        if (password !== "" || confirm !== "") {
             const passPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            if (!passPattern.test(passwordInput.value)) {
-                e.preventDefault();
-                document.getElementById('passwordError').textContent = "Password must be at least 8 characters and contain letters and numbers.";
-                hasError = true;
+
+            // Check password format
+            if (!passPattern.test(password)) {
+                document.getElementById('passwordError').textContent =
+                    "Password must be at least 8 characters long and contain letters and numbers.";
+                valid = false;
+            }
+
+            // Check if passwords match
+            else if (password !== confirm) {
+                document.getElementById('passwordError').textContent =
+                    "Passwords do not match!";
+                valid = false;
             }
         }
 
         // Contact number validation
-        const contactVal = document.getElementById('contactNumber').value;
+        const contactVal = document.getElementById('contactNumber').value.trim();
         if (!/^07\d{8}$/.test(contactVal)) {
-            e.preventDefault();
-            document.getElementById('contactError').textContent = "Contact number must be 10 digits starting with '07'.";
-            hasError = true;
+            document.getElementById('contactError').textContent =
+                "Contact number must be 10 digits starting with '07'.";
+            valid = false;
         }
 
         // Email validation
-        const emailVal = document.getElementById('email').value;
+        const emailVal = document.getElementById('email').value.trim();
         const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
         if (!emailPattern.test(emailVal)) {
-            e.preventDefault();
-            document.getElementById('emailError').textContent = "Enter a valid email address.";
-            hasError = true;
+            document.getElementById('emailMessage').textContent =
+                "Enter a valid email address.";
+            valid = false;
+        }
+
+        // Submit only if everything is valid
+        if (valid) {
+            profileForm.removeAttribute("action");
+            profileForm.setAttribute("action", "/patients/account/profile/edit");
+            profileForm.setAttribute("method", "post");
+            profileForm.submit();
         }
     });
 </script>
+
 </body>
 </html>
