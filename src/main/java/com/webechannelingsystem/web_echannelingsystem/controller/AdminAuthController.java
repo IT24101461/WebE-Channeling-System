@@ -2,6 +2,7 @@ package com.webechannelingsystem.web_echannelingsystem.controller;
 
 import com.webechannelingsystem.web_echannelingsystem.model.Admin;
 import com.webechannelingsystem.web_echannelingsystem.repository.AdminRepository;
+import com.webechannelingsystem.web_echannelingsystem.service.strategy.AuthenticationStrategy;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,18 +16,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AdminAuthController {
 
     private final AdminRepository adminRepository;
+    private final AuthenticationStrategy authenticationStrategy; // ADDED
 
-    public AdminAuthController(AdminRepository adminRepository) {
+    // MODIFIED CONSTRUCTOR
+    public AdminAuthController(AdminRepository adminRepository,
+                               AuthenticationStrategy authenticationStrategy) {
         this.adminRepository = adminRepository;
+        this.authenticationStrategy = authenticationStrategy;
     }
 
-    // Show login/signup page
     @GetMapping("/login")
     public String loginPage() {
-        return "login"; // renders admin-login.html
+        return "login";
     }
 
-    // Handle login
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
@@ -35,19 +38,16 @@ public class AdminAuthController {
 
         Admin admin = adminRepository.findByUsername(username).orElse(null);
 
-        if (admin != null && admin.getPassword().equals(password)) {
-            // Login successful, redirect to admin dashboard (pending doctors page)
+        // CHANGED: Use strategy instead of direct comparison
+        if (admin != null && authenticationStrategy.authenticate(admin, password)) {
             session.setAttribute("loggedInAdmin", admin);
-
             return "redirect:/admin/dashboard";
         } else {
-            // Login failed
             model.addAttribute("error", "Invalid username or password");
             return "login";
         }
     }
 
-    // Handle signup
     @PostMapping("/signup")
     public String signup(@RequestParam String fullName,
                          @RequestParam String email,
@@ -56,13 +56,10 @@ public class AdminAuthController {
                          @RequestParam String password,
                          Model model) {
 
-        // Check if username already exists
         if (adminRepository.findByUsername(username).isPresent()) {
             model.addAttribute("error", "Username already exists");
             return "login";
         }
-
-
 
         Admin admin = new Admin();
         admin.setFullName(fullName);
@@ -75,14 +72,12 @@ public class AdminAuthController {
         adminRepository.save(admin);
 
         model.addAttribute("message", "Signup successful! You can now login.");
-        return "login"; // redirect to login form
+        return "login";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // clear session
-        return "redirect:/admin/login?logout"; // back to login page
+        session.invalidate();
+        return "redirect:/admin/login?logout";
     }
-
 }
-
