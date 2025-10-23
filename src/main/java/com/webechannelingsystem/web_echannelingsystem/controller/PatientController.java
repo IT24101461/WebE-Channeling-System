@@ -6,6 +6,8 @@ import com.webechannelingsystem.web_echannelingsystem.model.Patient;
 import com.webechannelingsystem.web_echannelingsystem.service.AppointmentService;
 import com.webechannelingsystem.web_echannelingsystem.service.DoctorService;
 import com.webechannelingsystem.web_echannelingsystem.service.PatientService;
+import com.webechannelingsystem.web_echannelingsystem.service.LoginAttemptTracker;
+import com.webechannelingsystem.web_echannelingsystem.singleton.PatientSystemConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,13 +32,43 @@ public class PatientController {
     @Autowired
     private DoctorService doctorService;
 
+    @Autowired
+    private LoginAttemptTracker loginAttemptTracker;
+
+    /**
+     * Handles login with Singleton Pattern for configuration
+     * and tracks login attempts
+     */
     @PostMapping("/auth/login")
     public String login(@RequestParam String email, @RequestParam String password, Model model, HttpSession session) {
+        // Check if maintenance mode is enabled (using Singleton)
+        if (PatientSystemConfiguration.getInstance().isMaintenanceMode()) {
+            model.addAttribute("error", "System is under maintenance. Please try again later.");
+            return "patient-login";
+        }
+
+        // Check if user is blocked due to too many failed attempts
+        if (loginAttemptTracker.isBlocked(email)) {
+            long minutesRemaining = loginAttemptTracker.getMinutesUntilUnlock(email);
+            model.addAttribute("error", "Account temporarily locked due to multiple failed login attempts. Please try again in " + minutesRemaining + " minutes.");
+            return "patient-login";
+        }
+
         if (patientService.validatePatientCredentials(email, password)) {
+            // Reset failed attempts on successful login
+            loginAttemptTracker.resetAttempts(email);
             session.setAttribute("loggedInPatientEmail", email);
             return "redirect:/patients/dashboard";
         } else {
-            model.addAttribute("error", "Invalid email or password");
+            // Record failed attempt
+            loginAttemptTracker.recordFailedAttempt(email);
+
+            int remaining = loginAttemptTracker.getRemainingAttempts(email);
+            if (remaining > 0) {
+                model.addAttribute("error", "Invalid email or password. " + remaining + " attempts remaining.");
+            } else {
+                model.addAttribute("error", "Account locked due to multiple failed attempts.");
+            }
             return "patient-login";
         }
     }
@@ -91,6 +123,10 @@ public class PatientController {
         model.addAttribute("upcomingAppointments", upcomingAppointments);
         model.addAttribute("pastAppointments", pastAppointments);
         model.addAttribute("patient", patient);
+
+        // Add system name from Singleton to display in UI
+        model.addAttribute("systemName", PatientSystemConfiguration.getInstance().getSystemName());
+
         return "patient-dashboard";
     }
 
@@ -167,9 +203,6 @@ public class PatientController {
         return "patient-profile";
     }
 
-    /**
-     * Handles profile editing with Strategy Pattern password validation
-     */
     @PostMapping("/account/profile/edit")
     public String editProfile(@ModelAttribute Patient patient, HttpSession session, Model model) {
         String email = (String) session.getAttribute("loggedInPatientEmail");
@@ -194,7 +227,6 @@ public class PatientController {
         if (patient.getPassword() != null && !patient.getPassword().isEmpty()) {
             existingPatient.setPassword(patient.getPassword());
         } else {
-            // Keep existing password if not updating
             existingPatient.setPassword(null);
         }
 
@@ -202,12 +234,10 @@ public class PatientController {
             // Strategy Pattern is applied inside PatientService.updatePatient()
             patientService.updatePatient(existingPatient);
 
-            // Update session if email was changed
             session.setAttribute("loggedInPatientEmail", existingPatient.getEmail());
 
             return "redirect:/patients/account/profile?success=Profile updated successfully!";
         } catch (IllegalArgumentException e) {
-            // Display validation errors from Strategy Pattern
             model.addAttribute("error", e.getMessage());
             model.addAttribute("patient", existingPatient);
             return "patient-profile";

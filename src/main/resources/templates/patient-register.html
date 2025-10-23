@@ -69,11 +69,23 @@
             const email = emailField.value.trim();
             const message = document.getElementById("emailMessage");
 
+            // Clear message if email is empty
             if (email === "") {
                 message.textContent = "";
+                emailField.setCustomValidity("");
                 return;
             }
 
+            // Check if email format is valid first
+            const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                // Don't show any message for invalid format - let HTML5 validation handle it
+                message.textContent = "";
+                emailField.setCustomValidity("");
+                return;
+            }
+
+            // Only check database if email format is valid
             const response = await fetch(`/patients/check-email?email=${encodeURIComponent(email)}`);
             const exists = await response.json();
 
@@ -82,7 +94,8 @@
                 message.style.color = "red";
                 emailField.setCustomValidity("Email already registered");
             } else {
-                message.textContent = "✅ Email available.";
+                // Don't show "available" message - just clear any errors
+                message.textContent = "";
                 message.style.color = "green";
                 emailField.setCustomValidity("");
             }
