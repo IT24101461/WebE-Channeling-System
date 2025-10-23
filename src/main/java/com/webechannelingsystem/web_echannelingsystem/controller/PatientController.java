@@ -33,7 +33,7 @@ public class PatientController {
     @PostMapping("/auth/login")
     public String login(@RequestParam String email, @RequestParam String password, Model model, HttpSession session) {
         if (patientService.validatePatientCredentials(email, password)) {
-            session.setAttribute("loggedInPatientEmail", email); // Store email in session
+            session.setAttribute("loggedInPatientEmail", email);
             return "redirect:/patients/dashboard";
         } else {
             model.addAttribute("error", "Invalid email or password");
@@ -41,27 +41,36 @@ public class PatientController {
         }
     }
 
+    /**
+     * Handles patient registration with Strategy Pattern password validation
+     */
     @PostMapping("/register")
     public String registerPatient(@ModelAttribute Patient patient, Model model,
                                   @RequestParam("confirmPassword") String confirmPassword) {
-        // 1️⃣ Check passwords match
+        // Check passwords match
         if (!patient.getPassword().equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match!");
             model.addAttribute("patient", patient);
             return "patient-register";
         }
 
-        // 2️⃣ Continue normal registration
-        patientService.registerPatient(patient);
-        model.addAttribute("message", "Registration successful! Please log in.");
-        return "patient-login";
+        try {
+            // Strategy Pattern is applied inside PatientService.registerPatient()
+            patientService.registerPatient(patient);
+            model.addAttribute("message", "Registration successful! Please log in.");
+            return "patient-login";
+        } catch (IllegalArgumentException e) {
+            // Display validation errors from Strategy Pattern
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("patient", patient);
+            return "patient-register";
+        }
     }
-
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("patient", new Patient());
-        return "patient-register"; // Assumes a patient-register.html template exists
+        return "patient-register";
     }
 
     @GetMapping("/dashboard")
@@ -158,6 +167,9 @@ public class PatientController {
         return "patient-profile";
     }
 
+    /**
+     * Handles profile editing with Strategy Pattern password validation
+     */
     @PostMapping("/account/profile/edit")
     public String editProfile(@ModelAttribute Patient patient, HttpSession session, Model model) {
         String email = (String) session.getAttribute("loggedInPatientEmail");
@@ -173,29 +185,34 @@ public class PatientController {
 
         Patient existingPatient = existingPatientOpt.get();
 
-        // ✅ Update fields
+        // Update fields
         existingPatient.setFullName(patient.getFullName());
         existingPatient.setContactNumber(patient.getContactNumber());
         existingPatient.setEmail(patient.getEmail());
 
-        // ✅ Only update password if provided
+        // Only update password if provided
         if (patient.getPassword() != null && !patient.getPassword().isEmpty()) {
             existingPatient.setPassword(patient.getPassword());
+        } else {
+            // Keep existing password if not updating
+            existingPatient.setPassword(null);
         }
 
-        // ✅ Save changes
-        patientService.registerPatient(existingPatient);
+        try {
+            // Strategy Pattern is applied inside PatientService.updatePatient()
+            patientService.updatePatient(existingPatient);
 
-        // ✅ Update session if email was changed
-        session.setAttribute("loggedInPatientEmail", existingPatient.getEmail());
+            // Update session if email was changed
+            session.setAttribute("loggedInPatientEmail", existingPatient.getEmail());
 
-        // ✅ Add success message for confirmation
-        model.addAttribute("success", "Profile updated successfully!");
-
-        return "redirect:/patients/account/profile?success=Profile updated successfully!";
+            return "redirect:/patients/account/profile?success=Profile updated successfully!";
+        } catch (IllegalArgumentException e) {
+            // Display validation errors from Strategy Pattern
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("patient", existingPatient);
+            return "patient-profile";
+        }
     }
-
-
 
     @GetMapping("/book-appointment")
     public String showBookAppointmentForm(HttpSession session, Model model) {
@@ -265,8 +282,8 @@ public class PatientController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // Invalidate the session
-        return "redirect:/patients/login"; // Redirect to login page
+        session.invalidate();
+        return "redirect:/patients/login";
     }
 
     @PostMapping("/account/delete")
@@ -285,12 +302,11 @@ public class PatientController {
             return "patient-profile";
         }
     }
+
     @GetMapping("/check-email")
     @ResponseBody
     public ResponseEntity<Boolean> checkEmailExists(@RequestParam String email) {
         boolean exists = patientService.getPatientByEmail(email).isPresent();
         return ResponseEntity.ok(exists);
     }
-
-
 }
