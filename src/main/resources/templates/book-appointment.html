@@ -198,6 +198,53 @@
     console.log("Total doctors available:", allDoctors.length);
   });
   /*]]>*/
+
+  // Add this JavaScript to your existing script
+  document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+    const appointmentTime = document.getElementById('appointmentTime').value;
+    const selectedDoctorId = document.getElementById('selectedDoctorId').value;
+
+    let isValid = true;
+    let errorMessage = '';
+
+    // Validate doctor selection
+    if (!selectedDoctorId) {
+      isValid = false;
+      errorMessage = 'Please select a doctor';
+    }
+
+    // Validate appointment time
+    if (!appointmentTime) {
+      isValid = false;
+      errorMessage = 'Please select appointment date and time';
+    } else {
+      const selectedTime = new Date(appointmentTime);
+      const now = new Date();
+
+      if (selectedTime <= now) {
+        isValid = false;
+        errorMessage = 'Appointment time must be in the future';
+      }
+    }
+
+    if (!isValid) {
+      event.preventDefault();
+      alert('Validation Error: ' + errorMessage);
+
+      // You can also show the error in a better way
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'alert alert-danger';
+      errorDiv.textContent = errorMessage;
+
+      const existingError = document.querySelector('.alert-danger');
+      if (existingError) {
+        existingError.remove();
+      }
+
+      this.prepend(errorDiv);
+    }
+  });
+
 </script>
 
 </body>

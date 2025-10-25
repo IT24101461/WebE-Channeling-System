@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Emergency Appointment Confirmation</title>
+</head>
+<body>
+<div style="border: 2px solid red; padding: 20px; background-color: #ffe6e6;">
+    <h2 style="color: red;">🚨 Emergency Appointment Confirmed!</h2>
+    <p th:text="${notification}">Notification message</p>
+    <p th:text="${paymentMessage}">Payment message</p>
+    <p><strong>Please proceed to the emergency department immediately!</strong></p>
+    <a th:href="@{/patients/dashboard(email=${patient.email})}">Return to Dashboard</a>
+</div>
+</body>
+</html>

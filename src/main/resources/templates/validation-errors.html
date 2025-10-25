@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            padding: 8px 12px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+        .error-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .error-item {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<!-- Error display fragment -->
+<div th:fragment="errorDisplay" th:if="${errors != null}">
+    <div class="error-message">
+        <ul class="error-list">
+            <li th:each="error : ${errors}" class="error-item" th:text="${error.defaultMessage}">
+                Error message
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Single error display -->
+<div th:fragment="singleError" th:if="${error != null}">
+    <div class="error-message" th:text="${error}">
+        Error message
+    </div>
+</div>
+</body>
+</html>

@@ -13,6 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
+// Add these imports at the top
+import com.webechannelingsystem.web_echannelingsystem.factory.AppointmentStrategyFactory;
+import com.webechannelingsystem.web_echannelingsystem.factory.AppointmentFactory;
+import com.webechannelingsystem.web_echannelingsystem.factory.NotificationFactory;
+import com.webechannelingsystem.web_echannelingsystem.strategy.AppointmentBookingStrategy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +41,15 @@ public class PatientController {
     @Autowired
     private EmergencyBookingService emergencyBookingService;
 
+    @Autowired
+    private AppointmentStrategyFactory strategyFactory;
+
+    @Autowired
+    private AppointmentFactory appointmentFactory;
+
+    @Autowired
+    private NotificationFactory notificationFactory;
+
     @PostMapping("/auth/login")
     public String login(@RequestParam String email, @RequestParam String password, Model model) {
         if (patientService.validatePatientCredentials(email, password)) {
@@ -45,10 +61,31 @@ public class PatientController {
     }
 
     @PostMapping("/register")
-    public String registerPatient(@ModelAttribute Patient patient, Model model) {
-        patientService.registerPatient(patient);
-        model.addAttribute("message", "Registration successful! Please log in.");
-        return "patient-login";
+    public String registerPatient(@Valid @ModelAttribute Patient patient,
+                                  BindingResult result,
+                                  Model model) {
+        // Check for validation errors
+        if (result.hasErrors()) {
+            // Add error messages to model
+            model.addAttribute("errors", result.getAllErrors());
+            return "patient-registration"; // Make sure you have this template
+        }
+
+        try {
+            // Check if email already exists
+            if (patientService.getPatientByEmail(patient.getEmail()).isPresent()) {
+                model.addAttribute("error", "Email already registered");
+                return "patient-registration";
+            }
+
+            patientService.registerPatient(patient);
+            model.addAttribute("message", "Registration successful! Please log in.");
+            return "patient-login";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Registration failed: " + e.getMessage());
+            return "patient-registration";
+        }
     }
 
     @GetMapping("/dashboard")
@@ -163,18 +200,34 @@ public class PatientController {
     }
 
     @PostMapping("/account/profile/edit")
-    public String editProfile(@ModelAttribute Patient patient, @RequestParam String email, Model model) {
+    public String editProfile(@Valid @ModelAttribute Patient patient,
+                              BindingResult result,
+                              @RequestParam String email,
+                              Model model) {
+        // Check for validation errors
+        if (result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            model.addAttribute("patient", patient);
+            return "patient-profile";
+        }
+
         Optional<Patient> existingPatientOpt = patientService.getPatientByEmail(email);
         if (existingPatientOpt.isEmpty()) {
             model.addAttribute("error", "Patient not found");
             return "patient-profile";
         }
+
         Patient existingPatient = existingPatientOpt.get();
         existingPatient.setFullName(patient.getFullName());
         existingPatient.setContactNumber(patient.getContactNumber());
-        existingPatient.setPassword(patient.getPassword());
+
+        // Only update password if provided and not empty
+        if (patient.getPassword() != null && !patient.getPassword().trim().isEmpty()) {
+            existingPatient.setPassword(patient.getPassword());
+        }
+
         patientService.registerPatient(existingPatient);
-        return "redirect:/patients/dashboard?email=" + email;
+        return "redirect:/patients/dashboard?email=" + email + "&success=Profile updated successfully!";
     }
 
     @GetMapping("/book-appointment")
@@ -202,6 +255,16 @@ public class PatientController {
                                   @RequestParam String type,
                                   Model model) {
         try {
+            // Validate inputs
+            if (patientEmail == null || patientEmail.trim().isEmpty()) {
+                model.addAttribute("error", "Patient email is required");
+                return "book-appointment";
+            }
+
+            // Parse appointment time
+            LocalDateTime appointmentDateTime = LocalDateTime.parse(appointmentTime);
+
+            // Get patient and doctor
             Optional<Patient> patientOpt = patientService.getPatientByEmail(patientEmail);
             if (patientOpt.isEmpty()) {
                 model.addAttribute("error", "Patient not found");
@@ -214,22 +277,40 @@ public class PatientController {
                 return "book-appointment";
             }
 
-            Appointment appointment = new Appointment();
-            appointment.setPatient(patientOpt.get());
-            appointment.setDoctor(doctor);
-            appointment.setAppointmentTime(LocalDateTime.parse(appointmentTime));
-            appointment.setType(type);
-            appointment.setStatus("SCHEDULED");
-            appointment.setPaymentStatus("PENDING");
-            appointment.setEmail(patientEmail);
-            appointment.setPaymentMethod("NOT_SELECTED");
+            Patient patient = patientOpt.get();
 
+            // STRATEGY PATTERN: Get appropriate strategy
+            AppointmentBookingStrategy strategy = strategyFactory.getStrategy(type);
+
+            // Validate using strategy
+            String validationError = strategy.validateBooking(patient, doctor, appointmentDateTime);
+            if (validationError != null) {
+                model.addAttribute("error", validationError);
+                return showBookAppointmentForm(patientEmail, model);
+            }
+
+            // Create appointment using strategy
+            Appointment appointment = strategy.createAppointment(patient, doctor, appointmentDateTime, patientEmail);
+
+            // Handle payment using strategy
+            String paymentMessage = strategy.handlePayment(appointment);
+
+            // Save appointment
             Appointment savedAppointment = appointmentService.saveAppointment(appointment);
 
-            model.addAttribute("appointment", savedAppointment);
-            model.addAttribute("patient", patientOpt.get());
-            return "appointment-confirmation";
+            // FACTORY PATTERN: Create notification message
+            String notificationMessage = notificationFactory.createAppointmentConfirmationMessage(patient, savedAppointment);
 
+            model.addAttribute("appointment", savedAppointment);
+            model.addAttribute("patient", patient);
+            model.addAttribute("paymentMessage", paymentMessage);
+            model.addAttribute("notification", notificationMessage);
+
+            return strategy.getConfirmationTemplate();
+
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "book-appointment";
         } catch (Exception e) {
             model.addAttribute("error", "Failed to book appointment: " + e.getMessage());
             return "book-appointment";

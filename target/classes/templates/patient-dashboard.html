@@ -115,10 +115,26 @@
       background-color: #28a745;
       color: white;
       margin-right: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 8px;
     }
 
     .book-appointment:hover, .request-emergency:hover {
       opacity: 0.85;
+      color: white;
+    }
+
+    .request-emergency {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      animation: pulse-emergency 2s infinite;
+    }
+
+    @keyframes pulse-emergency {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+      50% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
     }
 
     .feedback {
@@ -135,6 +151,79 @@
       text-align: center;
       margin-bottom: 15px;
     }
+
+    .emergency-badge {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+      animation: pulse-badge 2s infinite;
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .priority-high {
+      color: #dc3545;
+      font-weight: 600;
+    }
+
+    .priority-medium {
+      color: #ffc107;
+      font-weight: 600;
+    }
+
+    .priority-low {
+      color: #28a745;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background-color: #ffc107;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-confirmed {
+      background-color: #28a745;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-completed {
+      background-color: #6c757d;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-cancelled {
+      background-color: #dc3545;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .section-divider {
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 3px solid #e0e0e0;
+    }
   </style>
 </head>
 <body>
@@ -145,12 +234,19 @@
 </div>
 <div class="main">
   <h1>Welcome to Your Dashboard, <span th:text="${patient.fullName}"></span></h1>
+  <div th:if="${param.success}" class="alert alert-success text-center">
+    <span th:text="${param.success}"></span>
+  </div>
   <div th:if="${error}" class="error" th:text="${error}"></div>
 
   <!-- New Appointment Buttons -->
   <div style="text-align: center; margin-bottom: 40px;">
-    <button class="book-appointment">Book Appointment</button>
-    <button class="request-emergency">Request Emergency Appointment</button>
+    <a th:href="@{/patients/book-appointment(email=${patient.email})}" class="book-appointment">
+      <i class="bi bi-calendar-plus"></i> Book Appointment
+    </a>
+    <a th:href="@{/patients/emergency-booking(email=${patient.email})}" class="request-emergency">
+      <i class="bi bi-exclamation-triangle-fill"></i> Request Emergency Appointment
+    </a>
   </div>
 
   <!-- Upcoming Appointments -->

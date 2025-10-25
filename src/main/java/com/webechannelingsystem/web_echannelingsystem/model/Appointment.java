@@ -1,6 +1,7 @@
 package com.webechannelingsystem.web_echannelingsystem.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,16 +15,20 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn(name = "Patient_ID", nullable = false)
+    @NotNull(message = "Patient is required")
     private Patient patient;
 
     @ManyToOne
     @JoinColumn(name = "Doctor_ID", nullable = false)
+    @NotNull(message = "Doctor is required")
     private Doctor doctor;
 
     @Column(name = "Appointment_Time", nullable = false)
+    @Future(message = "Appointment time must be in the future")
     private LocalDateTime appointmentTime;
 
     @Column(name = "Email")
+    @Email(message = "Please provide a valid email address")
     private String email;
 
     @Column(name = "Payment_Method")
@@ -33,15 +38,21 @@ public class Appointment {
     private String paymentStatus;
 
     @Column(name = "Type", length = 20, nullable = false)
-    private String type; // REGULAR or EMERGENCY
+    @NotBlank(message = "Appointment type is required")
+    @Pattern(regexp = "REGULAR|EMERGENCY", message = "Type must be REGULAR or EMERGENCY")
+    private String type;
 
     @Column(name = "Status", length = 20, nullable = false)
-    private String status; // SCHEDULED, COMPLETED, CANCELLED
+    @NotBlank(message = "Status is required")
+    @Pattern(regexp = "SCHEDULED|COMPLETED|CANCELLED", message = "Invalid status")
+    private String status;
 
-    // Constructors
+    // Constructors, getters, and setters remain the same
     public Appointment() {}
 
-    public Appointment(Patient patient, Doctor doctor, LocalDateTime appointmentTime, String email, String paymentMethod, String paymentStatus, String type, String status) {
+    public Appointment(Patient patient, Doctor doctor, LocalDateTime appointmentTime,
+                       String email, String paymentMethod, String paymentStatus,
+                       String type, String status) {
         this.patient = patient;
         this.doctor = doctor;
         this.appointmentTime = appointmentTime;
@@ -52,7 +63,7 @@ public class Appointment {
         this.status = status;
     }
 
-    // Getters and Setters
+    // Keep all your existing getters and setters...
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

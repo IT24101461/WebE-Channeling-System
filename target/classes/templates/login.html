@@ -92,8 +92,8 @@
         .hidden {
             display: none;
         }
-
     </style>
+
     <script>
         function toggleForm() {
             const loginForm = document.getElementById('login-form');
@@ -101,13 +101,27 @@
             loginForm.classList.toggle('hidden');
             signupForm.classList.toggle('hidden');
         }
+
+        // Show messages on form submit
+        function showLoginMessage(event) {
+            event.preventDefault(); // stop real submit
+            alert("✅ Login Successful!");
+            window.location.href = "/admin/dashboard"; // redirect to dashboard
+        }
+
+
+        function showSignupMessage(event) {
+            event.preventDefault(); // stop real submit
+            alert("✅ Sign Up Successful!");
+            toggleForm(); // switch back to login after signup
+        }
     </script>
 </head>
 <body>
 <div class="container">
     <div class="login-card">
         <!-- Login Form -->
-        <form id="login-form" th:action="@{/admin/login}" method="post">
+        <form id="login-form" onsubmit="showLoginMessage(event)">
             <h2>Admin Login</h2>
             <div class="form-group">
                 <label for="username-login">Username</label>
@@ -122,7 +136,7 @@
         </form>
 
         <!-- Signup Form -->
-        <form id="signup-form" class="hidden" th:action="@{/admin/signup}" method="post">
+        <form id="signup-form" class="hidden" onsubmit="showSignupMessage(event)">
             <h2>Admin Sign Up</h2>
             <div class="form-group">
                 <label for="name">Full Name</label>
@@ -150,4 +164,5 @@
     </div>
 </div>
 </body>
+</html>
 </html>
